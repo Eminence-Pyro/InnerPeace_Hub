@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Podcast - InnerPeace Hub{% endblock %}
+
+{% block content %}
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <span class="section-tag">The Podcast</span>
+      <h1>Real Conversations, <br/>Real Healing</h1>
+      <p>Real conversations on relationships, healing, and faith.</p>
+    </div>
+  </section>
+
+  <!-- Podcast Intro -->
+  <section class="podcast-intro">
+    <div class="container">
+      <div class="podcast-intro-content">
+        <div class="podcast-intro-text reveal-left">
+          <h2>About The Podcast</h2>
+          <p>InnerPeace Hub Podcast is a safe space where Ezinne Obinwa dives deep into the topics that matter most — relationships, faith, healing, self-discovery and intentional living.</p>
+          <p>Whether you're navigating heartbreak, seeking spiritual growth, or simply looking for a moment of peace in a busy world — this podcast is for you.</p>
+          <div class="podcast-platforms">
+            <p>Listen on:</p>
+            <div class="platform-links">
+             <a href="https://open.spotify.com/show/0a9u6z54GktrZsLCq3qI0f" target="_blank" class="platform-btn">
+               <i class="fab fa-spotify"></i> Spotify</a>
+              <a href="#" class="platform-btn">
+                <i class="fas fa-podcast"></i> Apple Podcasts
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="podcast-intro-image reveal-right">
+          <div class="podcast-image-bg"></div>
+          <img src="{{ url_for('static', filename='images/zinny1.png') }}" alt="Ezinne Obinwa" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Episodes -->
+  <section class="episodes">
+    <div class="container">
+      <h2>Latest Episodes</h2>
+      <p class="section-subtitle">New episodes dropping regularly</p>
+
+      <div class="episode-card reveal">
+        <div class="episode-header">
+          <span class="card-tag">Episode 1</span>
+          <span class="episode-date"><i class="fas fa-calendar"></i> 2025</span>
+        </div>
+        <h3>Healing After Heartbreak</h3>
+        <p>Ezinne shares practical and faith-based steps to heal, rebuild your confidence, and find peace after emotional pain.</p>
+        <iframe style="border-radius:12px"
+          src="https://open.spotify.com/embed/episode/7makk4oTQel546B0PZlDM5"
+          width="100%" height="152" frameBorder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+        </iframe>
+        <div class="episode-reactions">
+          <div class="reaction-buttons">
+            <button class="reaction-btn" data-reaction="love">
+              ❤️ <span class="reaction-label">Love</span>
+              <span class="reaction-count">0</span>
+            </button>
+            <button class="reaction-btn" data-reaction="pray">
+              🙏 <span class="reaction-label">Inspired</span>
+              <span class="reaction-count">0</span>
+            </button>
+            <button class="reaction-btn" data-reaction="insightful">
+              💡 <span class="reaction-label">Insightful</span>
+              <span class="reaction-count">0</span>
+            </button>
+            <button class="reaction-btn" data-reaction="fire">
+              🔥 <span class="reaction-label">Fire</span>
+              <span class="reaction-count">0</span>
+            </button>
+            <button class="reaction-btn" data-reaction="heal">
+              🌿 <span class="reaction-label">Healing</span>
+              <span class="reaction-count">0</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add more episodes below as they are published -->
+
+    </div>
+  </section>
+
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {% if post %}Edit Post{% else %}Create Post{% endif %} - InnerPeace Hub
+{% endblock %}
+
+{% block content %}
+
+<section class="admin-create">
+  <div class="container">
+
+    <div class="create-header">
+      <h1>{% if post %}Edit Post{% else %}Create New Post{% endif %}</h1>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert-error">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data" class="create-form">
+
+      <!-- Title -->
+      <div class="form-group">
+        <label for="title">Post Title</label>
+        <input 
+          type="text" 
+          id="title" 
+          name="title" 
+          placeholder="Enter post title"
+          value="{{ post.title if post else '' }}" 
+          required 
+        />
+      </div>
+
+      <!-- Category + Read Time -->
+      <div class="form-row">
+
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="">Select category</option>
+            <option value="Relationships" {% if post and post.category == 'Relationships' %}selected{% endif %}>Relationships</option>
+            <option value="Faith" {% if post and post.category == 'Faith' %}selected{% endif %}>Faith</option>
+            <option value="Family" {% if post and post.category == 'Family' %}selected{% endif %}>Family</option>
+            <option value="Healing" {% if post and post.category == 'Healing' %}selected{% endif %}>Healing</option>
+            <option value="Mindset" {% if post and post.category == 'Mindset' %}selected{% endif %}>Mindset</option>
+            <option value="Self-Discovery" {% if post and post.category == 'Self-Discovery' %}selected{% endif %}>Self-Discovery</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="read_time">Read Time</label>
+          <input 
+            type="text" 
+            id="read_time" 
+            name="read_time" 
+            placeholder="e.g. 5 min read"
+            value="{{ post.read_time if post else '' }}" 
+          />
+        </div>
+
+      </div>
+
+      <!-- Excerpt -->
+      <div class="form-group">
+        <label for="excerpt">Excerpt</label>
+        <textarea 
+          id="excerpt" 
+          name="excerpt" 
+          rows="3" 
+          placeholder="Brief description of the post..."
+        >{{ post.excerpt if post else '' }}</textarea>
+      </div>
+
+      <!-- CKEditor Content -->
+      <div class="form-group">
+        <label for="content">Content</label>
+
+        {{ ckeditor.load() }}
+        {{ ckeditor.config(     name='content',     filebrowserUploadUrl=url_for('upload'),     filebrowserUploadMethod='form' ) }}
+
+        <textarea name="content" id="content">
+{{ post.content if post else '' }}
+        </textarea>
+      </div>
+
+      <!-- Image -->
+      <div class="form-group">
+        <label for="image">Featured Image</label>
+
+        {% if post and post.image %}
+          <div class="current-image">
+            <img 
+              src="{{ url_for('static', filename='images/' + post.image) }}" 
+              alt="Current image" 
+            />
+            <p>Current image — upload a new one to replace it</p>
+          </div>
+        {% endif %}
+
+        <input type="file" id="image" name="image" accept="image/*" />
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn-primary btn-large">
+        {% if post %}
+          <i class="fas fa-save"></i> Update Post
+        {% else %}
+          <i class="fas fa-paper-plane"></i> Publish Post
+        {% endif %}
+      </button>
+
+    </form>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}About - InnerPeace Hub{% endblock %}
+
+{% block content %}
+
+  <!-- About Section -->
+  <section class="about">
+    <div class="container">
+      <div class="about-content">
+
+        <div class="about-image-wrapper reveal-left">
+          <div class="about-image-bg"></div>
+          <img src="{{ url_for('static', filename='images/ezinne1.png') }}" alt="Ezinne Uduma" />
+        </div>
+
+        <div class="about-text reveal-right">
+          <span class="section-tag">About Ezinne</span>
+          <h1>Healing Hearts, <br/>Restoring Peace</h1>
+          <p>Ezinne Obinwa is a storyteller, author, and digital creator whose work is fueled by a deep fascination with the human journey. A writer at heart, she has dedicated herself to documenting the nuances of life—from the lessons learned in marriage and self-discovery to the multifaceted roles of women as nurturers and trailblazers.</p>
+          <p>Her memoir, <em>The Tales of Ada Udumaeze (The Unveiling)</em>, reflects her belief that sharing our personal "unveilings" can spark light in the lives of others. Through her writing and multimedia projects, she seeks to empower individuals to embrace their unique blueprints and live with intentionality.</p>
+
+          <div class="about-stats">
+            <div class="stat">
+              <h3>1+</h3>
+              <p>Podcast Episodes</p>
+            </div>
+            <div class="stat">
+              <h3>3+</h3>
+              <p>Blog Articles</p>
+            </div>
+            <div class="stat">
+              <h3>∞</h3>
+              <p>Lives Touched</p>
+            </div>
+          </div>
+          <a href="{{ url_for('contact') }}" class="read-more-btn" style="font-size:16px;">
+            Get In Touch <span>→</span>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Mission Section -->
+      <div class="about-mission">
+        <h2>The Inspiration for InnerPeace Hub</h2>
+        <p>The InnerPeace Hub podcast and blog were established as a digital sanctuary — a space designed to help individuals navigate the noise of the modern world and reconnect with their internal sense of calm. Ezinne founded this platform to bridge the gap between spiritual reflection and practical personal development.</p>
+
+        <div class="mission-grid">
+          <div class="mission-card reveal">
+            <i class="fas fa-brain"></i>
+            <h3>Mindset & Manifestation</h3>
+            <p>Exploring the transformative power of the mind and tongue through her podcast series, The Word Made Flesh.</p>
+          </div>
+          <div class="mission-card reveal">
+            <i class="fas fa-heart"></i>
+            <h3>Celebrating Humanity</h3>
+            <p>A space that honors the complexity of being human — championing go-getters and nurturers seeking greatness and rest.</p>
+          </div>
+          <div class="mission-card reveal">
+            <i class="fas fa-seedling"></i>
+            <h3>Self-Discovery</h3>
+            <p>An invitation to embark on your own journey of "The Unveiling" — stripping away expectations to find inner peace.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Publications -->
+  <section class="publications">
+    <div class="container">
+      <h2 class="reveal">Publications</h2>
+      <p class="section-subtitle reveal">Words that heal, inspire and transform</p>
+
+      <div class="pub-grid">
+        <div class="pub-card reveal">
+          <img src="{{ url_for('static', filename='images/book-cover.jpg') }}" alt="The Tales of Ada Udumaeze" />
+          <div class="pub-body">
+            <span class="card-tag">Coming Soon</span>
+            <h3>The Tales of Ada Udumaeze</h3>
+            <p>My Journey into Marriage, Self-Discovery and Lessons Learnt</p>
+            <a href="#" class="read-more-btn">Learn More <span>→</span></a>
+          </div>
+        </div>
+
+        <div class="pub-card reveal">
+          <img src="{{ url_for('static', filename='images/ebook-cover.jpg') }}" alt="The 2026 Manifestation Mandate" />
+          <div class="pub-body">
+            <span class="card-tag">Free Download</span>
+            <h3>The 2026 Manifestation Mandate</h3>
+            <p>A Daily Scriptural Affirmations guide for intentional living.</p>
+            <a href="https://drive.google.com/file/d/17mdQuHbTsazBRY8y8phZJrf5DG7cgYFg/view?usp=drivesdk"
+               target="_blank"
+               class="read-more-btn">Download Free <span>→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

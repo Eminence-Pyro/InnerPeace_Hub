@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}InnerPeace Hub - Finding Peace, Healing Hearts{% endblock %}
+
+{% block content %}
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-content">
+      <div class="hero-text reveal-left">
+        <h1>Finding Peace, Healing Hearts, Growing in Faith</h1>
+        <p>
+          InnerPeace Hub is a safe space for relationship guidance, healing from heartbreak,
+          and growing closer to God through practical and faith-based insights.
+        </p>
+        <a href="{{ url_for('podcast') }}">
+          <button>Listen to Podcast 🎙️</button>
+        </a>
+      </div>
+      <div class="hero-image reveal-right">
+        <img src="{{ url_for('static', filename='images/zinny1.png') }}" alt="Ezinne Uduma" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Post -->
+  <section class="featured">
+    <div class="container">
+      <h2>Latest Podcast Episode</h2>
+      <p class="section-subtitle">Tune in and be inspired</p>
+
+      <div class="featured-card reveal">
+        <div class="featured-badge">New Episode</div>
+        <h3>Healing After Heartbreak</h3>
+        <p>
+          In this episode, Ezinne shares practical and faith-based steps to heal,
+          rebuild your confidence, and find peace after emotional pain.
+        </p>
+        <iframe style="border-radius:12px"
+          src="https://open.spotify.com/embed/episode/7makk4oTQel546B0PZlDM5"
+          width="100%" height="152" frameBorder="0"
+          allowfullscreen=""
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+        </iframe>
+        <a href="{{ url_for('podcast') }}" class="read-more-btn" style="margin-top:16px; display:inline-block;">
+          See All Episodes <span>→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Preview -->
+  <section class="blog-preview">
+    <div class="container">
+      <h2 class="reveal">Latest Articles</h2>
+      <p class="section-subtitle">Insights on relationships, healing and faith</p>
+
+      <div class="carousel-wrapper">
+        <button class="carousel-btn prev-btn">&#8249;</button>
+
+        <div class="carousel-track-container">
+          <div class="carousel-track">
+
+            {% if posts %}
+              {% for post in posts %}
+              <div class="blog-card">
+                {% if post.image %}
+                  <img src="{{ url_for('static', filename='images/' + post.image) }}" alt="{{ post.title }}" />
+                {% else %}
+                  <img src="{{ url_for('static', filename='images/relationship.jpg') }}" alt="{{ post.title }}" />
+                {% endif %}
+                <div class="card-body">
+                  <span class="card-tag">{{ post.category }}</span>
+                  <h3>{{ post.title }}</h3>
+                  <p>{{ post.excerpt }}</p>
+                  <a href="{{ url_for('post', slug=post.slug) }}" class="read-more-btn">Read More <span>→</span></a>
+                </div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="blog-card">
+                <img src="{{ url_for('static', filename='images/relationship.jpg') }}" alt="Healthy Relationships" />
+                <div class="card-body">
+                  <span class="card-tag">Relationships</span>
+                  <h3>Understanding Healthy Relationships</h3>
+                  <p>Learn the key principles that build strong, respectful, and lasting relationships.</p>
+                  <a href="{{ url_for('blog') }}" class="read-more-btn">Read More <span>→</span></a>
+                </div>
+              </div>
+
+              <div class="blog-card">
+                <img src="{{ url_for('static', filename='images/prayer.jpg') }}" alt="Growing Closer to God" />
+                <div class="card-body">
+                  <span class="card-tag">Faith</span>
+                  <h3>Growing Closer to God Daily</h3>
+                  <p>Simple and practical ways to strengthen your spiritual life every day.</p>
+                  <a href="{{ url_for('blog') }}" class="read-more-btn">Read More <span>→</span></a>
+                </div>
+              </div>
+
+              <div class="blog-card">
+                <img src="{{ url_for('static', filename='images/family.jpg') }}" alt="Raising Children" />
+                <div class="card-body">
+                  <span class="card-tag">Family</span>
+                  <h3>Raising Children the Godly Way</h3>
+                  <p>Guidance on nurturing children with strong values and faith.</p>
+                  <a href="{{ url_for('blog') }}" class="read-more-btn">Read More <span>→</span></a>
+                </div>
+              </div>
+            {% endif %}
+
+          </div>
+        </div>
+
+        <button class="carousel-btn next-btn">&#8250;</button>
+      </div>
+
+      <div class="carousel-dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Publications -->
+  <section class="publications">
+    <div class="container">
+      <h2 class="reveal">From Ezinne's Desk</h2>
+      <p class="section-subtitle reveal">Words that heal, inspire and transform</p>
+
+      <div class="pub-grid">
+        <div class="pub-card reveal">
+          <img src="{{ url_for('static', filename='images/book-cover.jpg') }}" alt="The Tales of Ada Udumaeze" />
+          <div class="pub-body">
+            <span class="card-tag">Coming Soon</span>
+            <h3>The Tales of Ada Udumaeze</h3>
+            <p>My Journey into Marriage, Self-Discovery and Lessons Learnt</p>
+            <a href="#" class="read-more-btn">Learn More <span>→</span></a>
+          </div>
+        </div>
+
+        <div class="pub-card reveal">
+          <img src="{{ url_for('static', filename='images/ebook-cover.jpg') }}" alt="The 2026 Manifestation Mandate" />
+          <div class="pub-body">
+            <span class="card-tag">Free Download</span>
+            <h3>The 2026 Manifestation Mandate</h3>
+            <p>A Daily Scriptural Affirmations guide for intentional living.</p>
+            <a href="https://drive.google.com/file/d/17mdQuHbTsazBRY8y8phZJrf5DG7cgYFg/view?usp=drivesdk"
+               target="_blank"
+               class="read-more-btn">Download Free <span>→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

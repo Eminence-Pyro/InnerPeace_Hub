@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - InnerPeace Hub{% endblock %}
+
+{% block content %}
+
+<section class="post-section">
+  <div class="post-container">
+
+    <!-- Title -->
+    <h1 class="post-title">{{ post.title }}</h1>
+
+    <!-- Meta -->
+    <div class="post-meta">
+      <span>{{ post.category }}</span> •
+      <span>{{ post.read_time }}</span> •
+      <span>{{ post.date_posted.strftime('%B %d, %Y') }}</span>
+    </div>
+
+    <!-- Featured Image -->
+    {% if post.image %}
+      <div class="post-image">
+        <img src="{{ url_for('static', filename='images/' + post.image) }}" alt="{{ post.title }}">
+      </div>
+    {% endif %}
+
+    <!-- Content -->
+    <div class="post-content">
+      {{ post.content | safe }}
+    </div>
+
+  </div>
+</section>
+
+<!-- Related Posts -->
+{% if related %}
+<section class="related-section">
+  <div class="container">
+    <h2>Related Posts</h2>
+
+    <div class="blog-grid">
+      {% for item in related %}
+        <div class="blog-card">
+          {% if item.image %}
+            <img src="{{ url_for('static', filename='images/' + item.image) }}">
+          {% endif %}
+
+          <div class="card-body">
+            <span class="card-tag">{{ item.category }}</span>
+            <h3>{{ item.title }}</h3>
+
+            <a href="{{ url_for('post', slug=item.slug) }}" class="read-more-btn">
+              Read More →
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

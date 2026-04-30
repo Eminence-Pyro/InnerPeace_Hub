@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact - InnerPeace Hub{% endblock %}
+
+{% block content %}
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <span class="section-tag">Contact</span>
+      <h1>Let's Connect</h1>
+      <p>Have a question or just want to say hello? We'd love to hear from you!</p>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact">
+    <div class="container">
+      <div class="contact-wrapper">
+
+        <!-- Contact Info -->
+        <div class="contact-info reveal-left">
+          <h2>Get In Touch</h2>
+          <p>Whether you have a question, a prayer request, or just want to share your story — Ezinne is here for you.</p>
+          
+          <div class="contact-details">
+            <div class="contact-detail-item">
+              <div class="contact-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div>
+                <h4>Email</h4>
+                <p>info.innerpeacehub@gmail.com</p>
+              </div>
+            </div>
+          
+            <div class="contact-detail-item">
+              <div class="contact-icon">
+                <i class="fas fa-phone"></i>
+              </div>
+              <div>
+                <h4>Phone</h4>
+                <p>+234 813 608 5634</p>
+              </div>
+            </div>
+          
+            <div class="contact-detail-item">
+              <div class="contact-icon">
+                <i class="fab fa-whatsapp"></i>
+              </div>
+              <div>
+                <h4>WhatsApp</h4>
+                <p>+234 813 608 5634</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="contact-social">
+            <p>Follow Ezinne:</p>
+            <div class="social-icons">
+              <a href="https://www.facebook.com/share/1CtiTA5aKH/" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="https://www.instagram.com/innerpeace_hub?utm_source=qr&igsh=OGtpMGs0emZnOWtj" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+              <a href="https://www.tiktok.com/@mhizzinnyu" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+              <a href="https://www.linkedin.com/in/divine-nnata-0203b7225?utm_source=share_via&utm_content=profile&utm_medium=member_android" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+              <a href="https://t.me/+2348136085634" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+              <a href="https://wa.me/+2348136085634" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+              <a href="https://x.com/MhizZinnyU" aria-label="Instagram"><i class="fab fa-x-twitter"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="contact-form-wrapper reveal-right">
+
+          {% if request.args.get('success') %}
+          <div class="form-success">
+            <i class="fas fa-check-circle"></i>
+            <h3>Message Sent!</h3>
+            <p>Thank you for reaching out. Ezinne will get back to you soon.</p>
+          </div>
+          {% else %}
+          <form class="contact-form" method="POST" action="{{ url_for('contact') }}">
+
+            <div class="form-group">
+              <label for="name">Your Name</label>
+              <input type="text" id="name" name="name" placeholder="Ezinne Obinwa" required />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Your Email</label>
+              <input type="email" id="email" name="email" placeholder="hello@example.com" required />
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" name="subject" placeholder="What's on your heart?" required />
+            </div>
+
+            <div class="form-group">
+              <label for="message">Your Message</label>
+              <textarea id="message" name="message" rows="6" placeholder="Share your thoughts..." required></textarea>
+            </div>
+
+            <button type="submit">
+              Send Message <i class="fas fa-paper-plane"></i>
+            </button>
+
+          </form>
+          {% endif %}
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+{% endblock %}

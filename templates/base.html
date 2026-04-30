@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}InnerPeace Hub{% endblock %}</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" sizes="32x32" href="{{ url_for('static', filename='images/favicon.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+  
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <div class="nav-overlay" id="nav-overlay"></div>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container">
+      <div class="logo">
+        <a href="{{ url_for('index') }}">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="InnerPeace Hub Logo">
+        </a>
+      </div>
+      <nav>
+        <button class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul class="nav-links" id="nav-links">
+          <li><a href="{{ url_for('index') }}">Home</a></li>
+          <li><a href="{{ url_for('blog') }}">Blog</a></li>
+          <li><a href="{{ url_for('podcast') }}">Podcast</a></li>
+          <li><a href="{{ url_for('about') }}">About</a></li>
+          <li><a href="{{ url_for('contact') }}">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Flash Messages -->
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for message in messages %}
+          <div class="flash-message">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Main Content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <h3>
+          <span class="inner">Inner</span><span class="peace">Peace</span> <span class="hub">Hub</span>
+        </h3>
+        <p>A platform for healing, growth, and faith-centered living.</p>
+        <div class="social-icons">
+        <a href="https://www.facebook.com/share/1CtiTA5aKH/" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/innerpeace_hub?utm_source=qr&igsh=OGtpMGs0emZnOWtj" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@mhizzinnyu" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        <a href="https://www.linkedin.com/in/divine-nnata-0203b7225?utm_source=share_via&utm_content=profile&utm_medium=member_android" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="https://t.me/+2348136085634" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+        <a href="https://wa.me/+2348136085634" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://x.com/MhizZinnyU" aria-label="Instagram"><i class="fab fa-x-twitter"></i></a>
+      </div>
+      </div>
+
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <p><a href="{{ url_for('index') }}">Home</a></p>
+        <p><a href="{{ url_for('blog') }}">Blog</a></p>
+        <p><a href="{{ url_for('podcast') }}">Podcast</a></p>
+        <p><a href="{{ url_for('about') }}">About</a></p>
+        <p><a href="{{ url_for('contact') }}">Contact</a></p>
+      </div>
+
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p><a href="mailto:info.innerpeacehub@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i> info.innerpeacehub@gmail.com</a></p>
+        <p><a href="tel:+2348136085634" aria-label="Phone"><i class="fas fa-phone"></i> +234 813 608 5634</a></p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 InnerPeace Hub. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+
+</body>
+</html>
