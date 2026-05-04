@@ -235,3 +235,13 @@ if (revealElements.length > 0) {
 
   revealElements.forEach(el => revealObserver.observe(el));
 }
+
+// Auto-dismiss flash messages
+const flashMessages = document.querySelectorAll('.flash-message');
+flashMessages.forEach(msg => {
+  setTimeout(() => {
+    msg.style.opacity = '0';
+    msg.style.transition = 'opacity 0.5s';
+    setTimeout(() => msg.remove(), 500);
+  }, 4000);
+});
