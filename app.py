@@ -17,7 +17,14 @@ app = Flask(__name__)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+
+database_url = os.environ.get('DATABASE_URL')
+
+if database_url and database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'sqlite:///innerpeacehub.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.config['CKEDITOR_PKG_TYPE'] = 'standard'
 app.config['CKEDITOR_FILE_UPLOADER'] = 'upload'
@@ -323,6 +330,17 @@ def init_db():
 
 # ===== RUN =====
 
+# This runs init_db on startup, not just locally
+with app.app_context():
+    db.create_all()
+    if not Admin.query.first():
+        from werkzeug.security import generate_password_hash
+        admin = Admin(
+            username='ezinne',
+            password=generate_password_hash('innerpeace2026')
+        )
+        db.session.add(admin)
+        db.session.commit()
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)
