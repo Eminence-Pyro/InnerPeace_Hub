@@ -4,7 +4,7 @@ from flask_ckeditor import CKEditor
 from flask import jsonify
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timezone
 import os
 import uuid
 from slugify import slugify
@@ -74,7 +74,7 @@ class Post(db.Model):
     excerpt = db.Column(db.String(300), nullable=False)
     content = db.Column(db.Text, nullable=False)
     image = db.Column(db.String(500), nullable=True)
-    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    date_posted = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     read_time = db.Column(db.String(20), default='5 min read')
     comments = db.relationship('Comment', backref='post', lazy=True)
 
@@ -84,7 +84,7 @@ class Comment(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     body = db.Column(db.Text, nullable=False)
-    date_posted = db.Column(db.DateTime, default=datetime.utcnow)
+    date_posted = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -92,7 +92,7 @@ class Message(db.Model):
     email = db.Column(db.String(100), nullable=False)
     subject = db.Column(db.String(200), nullable=False)
     message = db.Column(db.Text, nullable=False)
-    date_sent = db.Column(db.DateTime, default=datetime.utcnow)
+    date_sent = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_read = db.Column(db.Boolean, default=False)
 
 @login_manager.user_loader
