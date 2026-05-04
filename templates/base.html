@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% block title %}InnerPeace Hub{% endblock %}</title>
+  <meta name="description" content="{{ post.excerpt if post else 'InnerPeace Hub blog' }}">
+  <meta name="keywords" content="relationships, healing, faith, self-discovery, intentional living, podcast, blog">
+  <meta property="og:title" content="{% block title %}InnerPeace Hub{% endblock %}">
+  <meta property="og:description" content="{{ post.excerpt if post else 'InnerPeace Hub blog' }}">
+  <meta property="og:image" content="{{ url_for('static', filename='images/' + post.image) if post and post.image else '' }}">
+  <meta property="og:url" content="{{ request.url }}">
   
   <!-- Favicon -->
   <link rel="icon" sizes="32x32" href="{{ url_for('static', filename='images/favicon.png') }}">
@@ -21,6 +26,8 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body>
+
+  <div id="progress-bar"></div>
 
   <div class="nav-overlay" id="nav-overlay"></div>
 
@@ -109,5 +116,8 @@
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   {% block extra_scripts %}{% endblock %}
 
+  <button id="scrollTopBtn" aria-label="Scroll to Top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
 </body>
 </html>

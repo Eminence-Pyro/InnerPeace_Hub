@@ -19,6 +19,17 @@ body {
   flex-direction: column;
 }
 
+#progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #6B2D8B, #D4A843);
+  width: 0%;
+  z-index: 2000;
+  transition: width 0.1s ease-out;
+}
+
 main {
   flex: 1;
   padding-top: 90px;
@@ -464,10 +475,22 @@ section {
 .post {
   padding: 60px 0;
   background: #FFF9F5;
+  animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0);
+  }
 }
 
 .post-content {
-  max-width: 800px;
+  max-width: 700px;
   margin: 0 auto;
 }
 
@@ -483,11 +506,8 @@ section {
 }
 
 .post-meta {
-  display: flex;
-  gap: 24px;
-  color: #888;
-  font-size: 14px;
-  flex-wrap: wrap;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
 }
 
 .post-meta span {
@@ -501,22 +521,40 @@ section {
 }
 
 .post-content img {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 16px;
-  margin-bottom: 40px;
+  border-radius: 12px;
+  margin-bottom: 30px;
 }
 
 .post-body {
-  max-width: 700px;
-  margin: auto;
-  font-size: 17px;
-  line-height: 1.8em;
+  font-size: 18px;
+  line-height: 1.9;
+  color: #444;
 }
 
 .post-body h2 {
   margin-top: 32px;
+  margin-bottom: 12px;
+  font-size: 28px;
+  color: #6B2D8B;
+}
+
+.post-body h3 {
+  margin-top: 24px;
+  margin-bottom: 10px;
+  font-size: 22px;
+}
+
+.post-body ul {
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.post-body blockquote {
+  border-left: 4px solid #6B2D8B;
+  padding-left: 16px;
+  color: #555;
+  font-style: italic;
+  margin: 24px 0;
 }
 
 .post-body p {
@@ -2032,6 +2070,23 @@ img {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
+}
+
+#scrollTopBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: linear-gradient(135deg, #6B2D8B, #D4A843);
+  color: #fff;
+  border: none;
+  padding: 12px 14px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 1500;
+  box-shadow: 0 4px 15px rgba(107, 45, 139, 0.3);
+  transition: transform 0.3s, opacity 0.3s;
+  transform: translateY(-3px);
 }
 /* ===== MEDIA QUERIES ===== */
 

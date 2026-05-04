@@ -84,7 +84,7 @@
         <label for="content">Content</label>
 
         {{ ckeditor.load() }}
-        {{ ckeditor.config(     name='content',     filebrowserUploadUrl=url_for('upload'),     filebrowserUploadMethod='form' ) }}
+        {{ ckeditor.config(name='content', filebrowserUploadUrl=url_for('upload'), filebrowserUploadMethod='form' ) }}
 
         <textarea name="content" id="content">
 {{ post.content if post else '' }}

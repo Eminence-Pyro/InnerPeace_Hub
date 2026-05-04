@@ -9,6 +9,8 @@ import os
 import uuid
 from slugify import slugify
 import re
+import cloudinary
+import cloudinary.uploader
 
 
 app = Flask(__name__)
@@ -32,6 +34,12 @@ app.config['CKEDITOR_ENABLE_CSRF'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'images')
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'webp'}
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB upload limit
+
+cloudinary.config(
+    cloud_name=os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.environ.get('CLOUDINARY_API_KEY'),
+    api_secret=os.environ.get('CLOUDINARY_API_SECRET')
+)
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
@@ -65,9 +73,10 @@ class Post(db.Model):
     category = db.Column(db.String(80), nullable=False)
     excerpt = db.Column(db.String(300), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    image = db.Column(db.String(200), nullable=True)
+    image = db.Column(db.String(500), nullable=True)
     date_posted = db.Column(db.DateTime, default=datetime.utcnow)
     read_time = db.Column(db.String(20), default='5 min read')
+    comments = db.relationship('Comment', backref='post', lazy=True)
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -196,10 +205,8 @@ def create_post():
         image_filename = None
 
         if image_file and allowed_file(image_file.filename):
-            ext = image_file.filename.rsplit('.', 1)[1].lower()
-            filename = f"{uuid.uuid4().hex}.{ext}"
-            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            image_filename = filename
+            upload_result = cloudinary.uploader.upload(image_file)
+            image_filename = upload_result['secure_url']
 
         new_post = Post(
             title=title,
@@ -265,10 +272,8 @@ def edit_post(post_id):
         image_file = request.files.get('image')
 
         if image_file and allowed_file(image_file.filename):
-            ext = image_file.filename.rsplit('.', 1)[1].lower()
-            filename = f"{uuid.uuid4().hex}.{ext}"
-            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            post.image = filename
+           upload_result = cloudinary.uploader.upload(image_file)
+        post.image = upload_result['secure_url']
 
         db.session.commit()
         flash("Post updated successfully")

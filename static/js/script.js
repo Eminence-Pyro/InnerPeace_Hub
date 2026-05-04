@@ -245,3 +245,27 @@ flashMessages.forEach(msg => {
     setTimeout(() => msg.remove(), 500);
   }, 4000);
 });
+
+// Reading Progress Bar
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.body.scrollHeight - window.innerHeight;
+  if (docHeight > 0) {
+    const progress = (scrollTop / docHeight) * 100;
+    const bar = document.getElementById('progress-bar');
+    if (bar) bar.style.width = progress + '%';
+  }
+});
+
+// Scroll to Top Button
+const scrollTopBtn = document.getElementById('scrollTopBtn');
+window.addEventListener('scroll', () => {
+  if (scollBtn) {
+    scrollTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+  }
+});
+if (scrollTopBtn) {
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}

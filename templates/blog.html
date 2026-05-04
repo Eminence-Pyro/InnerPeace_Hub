@@ -29,12 +29,11 @@
         {% for post in posts.items %}
         <div class="blog-card reveal">
           
-          {% if post.image %}
-            <img src="{{ url_for('static', filename='images/' + post.image) }}" alt="{{ post.title }}" />
+          {% if post.image and post.image.startswith('http') %}
+          <img src="{{ post.image }}" alt="{{ post.title }}" loading="lazy" />
           {% else %}
-            <img src="{{ url_for('static', filename='images/relationship.jpg') }}" alt="{{ post.title }}" />
+          <img src="{{ url_for('static', filename='images/relationship.jpg') }}" alt="{{ post.title }}" loading="lazy" />
           {% endif %}
-
           <div class="card-body">
             <span class="card-tag">{{ post.category }}</span>
             <h3>{{ post.title }}</h3>

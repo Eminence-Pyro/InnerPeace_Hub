@@ -20,7 +20,10 @@
     <!-- Featured Image -->
     {% if post.image %}
       <div class="post-image">
-        <img src="{{ url_for('static', filename='images/' + post.image) }}" alt="{{ post.title }}">
+        <img src="{{ post.image }}" alt="{{ post.title }}">
+    {% else %}
+      <div class="post-image">
+        <img src="{{ url_for('static', filename='images/relationship.jpg') }}" alt="{{ post.title }}">
       </div>
     {% endif %}
 

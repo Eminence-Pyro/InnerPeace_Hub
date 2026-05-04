@@ -7,3 +7,4 @@ flask-wtf
 bleach
 gunicorn
 psycopg2-binary
+cloudinary
