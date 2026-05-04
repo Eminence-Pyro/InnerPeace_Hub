@@ -6,3 +6,4 @@ python-slugify
 flask-wtf
 bleach
 gunicorn
+psycopg2-binary
