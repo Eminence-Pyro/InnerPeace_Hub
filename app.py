@@ -17,7 +17,7 @@ app = Flask(__name__)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(BASE_DIR, 'innerpeacehub.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 
 app.config['CKEDITOR_PKG_TYPE'] = 'standard'
 app.config['CKEDITOR_FILE_UPLOADER'] = 'upload'
