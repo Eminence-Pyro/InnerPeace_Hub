@@ -6,12 +6,14 @@ from flask_login import LoginManager, UserMixin, login_user, logout_user, login_
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
 from dotenv import load_dotenv
+
 import os
 import uuid
-from slugify import slugify
 import re
 import cloudinary
 import cloudinary.uploader
+
+from slugify import slugify
 
 load_dotenv()
 
