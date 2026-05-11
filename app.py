@@ -2,6 +2,7 @@ from flask import Flask
 from flask_ckeditor import CKEditor
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash
+from flask_wtf.csrf import CSRFProtect
 import cloudinary
 
 from config import Config
@@ -19,6 +20,7 @@ def create_app(config_class=Config):
     # Initialize extensions
     db.init_app(app)
     CKEditor(app)
+    CSRFProtect(app)
     
     # Configure Cloudinary
     cloudinary.config(
@@ -43,6 +45,31 @@ def create_app(config_class=Config):
     # Initialize database and create admin user
     with app.app_context():
         db.create_all()
+        
+        # Handle schema migrations for existing databases
+        try:
+            from sqlalchemy import inspect, text
+            inspector = inspect(db.engine)
+            
+            # Check if Post table exists and has the new columns
+            if 'post' in inspector.get_table_names():
+                columns = [col['name'] for col in inspector.get_columns('post')]
+                
+                # Add missing columns if they don't exist
+                with db.engine.begin() as conn:
+                    if 'status' not in columns:
+                        conn.execute(text("ALTER TABLE post ADD COLUMN status VARCHAR(20) DEFAULT 'draft'"))
+                        print('Added status column to post table')
+                    
+                    if 'is_featured' not in columns:
+                        conn.execute(text("ALTER TABLE post ADD COLUMN is_featured BOOLEAN DEFAULT FALSE"))
+                        print('Added is_featured column to post table')
+                    
+                    if 'tags' not in columns:
+                        conn.execute(text("ALTER TABLE post ADD COLUMN tags VARCHAR(200)"))
+                        print('Added tags column to post table')
+        except Exception as e:
+            print(f'Schema migration note: {e}')
         
         if not Admin.query.first():
             admin = Admin(

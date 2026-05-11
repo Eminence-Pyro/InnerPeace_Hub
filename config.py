@@ -16,14 +16,21 @@ class Config:
     
     # CKEditor
     CKEDITOR_PKG_TYPE = 'standard'
-    CKEDITOR_FILE_UPLOADER = 'upload'
-    CKEDITOR_ENABLE_CSRF = False
+    CKEDITOR_FILE_UPLOADER = 'admin.upload'
+    CKEDITOR_ENABLE_CSRF = False  # Enable CSRF protection
     
     # File upload
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
-    MAX_CONTENT_LENGTH = 2 * 1024 * 1024  # 2MB upload limit
+    MAX_CONTENT_LENGTH = 5 * 1024 * 1024  # 5MB upload limit
     
     # Cloudinary
     CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
     CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
     CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
+    
+    # Security
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    PERMANENT_SESSION_LIFETIME = 2592000  # 30 days in seconds
+

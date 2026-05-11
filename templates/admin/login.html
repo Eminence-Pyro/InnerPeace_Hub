@@ -21,7 +21,7 @@
         {% endif %}
       {% endwith %}
 
-      <form method="POST" action="{{ url_for('admin_login') }}">
+      <form method="POST" action="{{ url_for('auth.admin_login') }}">
         <div class="form-group">
           <label for="username">Username</label>
           <input type="text" id="username" name="username" placeholder="Enter username" required />

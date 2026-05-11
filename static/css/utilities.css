@@ -1,0 +1,117 @@
+/* ===== UTILITY CLASSES ===== */
+
+.section-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #6B2D8B, #D4A843);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.featured-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #6B2D8B, #D4A843);
+  color: white;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.card-tag {
+  background: linear-gradient(135deg, #6B2D8B, #D4A843);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: #888;
+  margin-bottom: 40px;
+  font-size: 16px;
+}
+
+.page-header {
+  padding: 80px 0 40px;
+  background: linear-gradient(135deg, #F5E6FF 0%, #FFF9F5 100%);
+  text-align: center;
+}
+
+.page-header span {
+  margin-bottom: 12px;
+  display: inline-block;
+}
+
+.page-header h1 {
+  font-size: 42px;
+  margin-bottom: 12px;
+  color: #6B2D8B;
+}
+
+.page-header p {
+  color: #777;
+  font-size: 16px;
+}
+
+/* Reveal/Scroll Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #888;
+}
+
+.empty-state i {
+  font-size: 40px;
+  color: #ddd;
+  margin-bottom: 16px;
+}
+
+.empty-state p {
+  margin-bottom: 20px;
+}

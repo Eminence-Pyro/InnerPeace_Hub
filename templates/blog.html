@@ -13,79 +13,151 @@
   </div>
 </section>
 
+<!-- Category Filter -->
 <div class="category-filter">
-  <a href="{{ url_for('blog') }}">All</a>
-  <a href="{{ url_for('blog', category='Faith') }}">Faith</a>
-  <a href="{{ url_for('blog', category='Relationships') }}">Relationships</a>
-  <a href="{{ url_for('blog', category='Family') }}">Family</a>
+
+  <a 
+    href="{{ url_for('blog.blog') }}"
+    class="{% if not current_category %}active{% endif %}">
+    All
+  </a>
+
+  <a 
+    href="{{ url_for('blog.blog', category='Faith') }}"
+    class="{% if current_category == 'Faith' %}active{% endif %}">
+    Faith
+  </a>
+
+  <a 
+    href="{{ url_for('blog.blog', category='Relationships') }}"
+    class="{% if current_category == 'Relationships' %}active{% endif %}">
+    Relationships
+  </a>
+
+  <a 
+    href="{{ url_for('blog.blog', category='Family') }}"
+    class="{% if current_category == 'Family' %}active{% endif %}">
+    Family
+  </a>
+
 </div>
 
 <!-- Blog Grid -->
 <section class="blog-page">
   <div class="container">
+
     <div class="blog-grid">
 
       {% if posts.items %}
+
         {% for post in posts.items %}
-        <div class="blog-card reveal">
-          
-          {% if post.image and post.image.startswith('http') %}
-          <img src="{{ post.image }}" alt="{{ post.title }}" loading="lazy" />
+
+        <article class="blog-card reveal">
+
+          {% if post.image %}
+            <img 
+              src="{{ post.image }}" 
+              alt="{{ post.title }}" 
+              loading="lazy"
+            >
           {% else %}
-          <img src="{{ url_for('static', filename='images/relationship.jpg') }}" alt="{{ post.title }}" loading="lazy" />
+            <img 
+              src="{{ url_for('static', filename='images/relationship.jpg') }}" 
+              alt="Default blog image"
+              loading="lazy"
+            >
           {% endif %}
+
           <div class="card-body">
-            <span class="card-tag">{{ post.category }}</span>
+
+            <span class="card-tag">
+              {{ post.category }}
+            </span>
+
             <h3>{{ post.title }}</h3>
+
             <p>{{ post.excerpt }}</p>
 
-            <a href="{{ url_for('post', slug=post.slug) }}" class="read-more-btn">
+            <a 
+              href="{{ url_for('blog.post', slug=post.slug) }}"
+              class="read-more-btn"
+            >
               Read More <span>→</span>
             </a>
+
           </div>
-        </div>
+
+        </article>
+
         {% endfor %}
 
       {% else %}
+
         <p style="text-align:center; font-size:1.2rem;">
           No blog posts available yet.
         </p>
+
       {% endif %}
 
     </div>
 
     <!-- Pagination -->
     {% if posts.pages > 1 %}
+
     <div class="pagination">
 
       <!-- Previous -->
       {% if posts.has_prev %}
-        <a href="{{ url_for('blog', page=posts.prev_num) }}" class="page-btn">← Prev</a>
+        <a 
+          href="{{ url_for('blog.blog', page=posts.prev_num, category=current_category) }}"
+          class="page-btn"
+        >
+          ← Prev
+        </a>
       {% endif %}
 
       <!-- Page Numbers -->
       {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
-        
+
         {% if page_num %}
+
           {% if page_num == posts.page %}
-            <span class="page-btn active">{{ page_num }}</span>
+
+            <span class="page-btn active">
+              {{ page_num }}
+            </span>
+
           {% else %}
-            <a href="{{ url_for('blog', page=page_num) }}" class="page-btn">
+
+            <a 
+              href="{{ url_for('blog.blog', page=page_num, category=current_category) }}"
+              class="page-btn"
+            >
               {{ page_num }}
             </a>
+
           {% endif %}
+
         {% else %}
+
           <span class="page-btn">...</span>
+
         {% endif %}
 
       {% endfor %}
 
       <!-- Next -->
       {% if posts.has_next %}
-        <a href="{{ url_for('blog', page=posts.next_num) }}" class="page-btn">Next →</a>
+        <a 
+          href="{{ url_for('blog.blog', page=posts.next_num, category=current_category) }}"
+          class="page-btn"
+        >
+          Next →
+        </a>
       {% endif %}
 
     </div>
+
     {% endif %}
 
   </div>

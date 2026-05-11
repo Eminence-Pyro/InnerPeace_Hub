@@ -13,7 +13,7 @@
           InnerPeace Hub is a safe space for relationship guidance, healing from heartbreak,
           and growing closer to God through practical and faith-based insights.
         </p>
-        <a href="{{ url_for('podcast') }}">
+        <a href="{{ url_for('blog.podcast') }}">
           <button>Listen to Podcast 🎙️</button>
         </a>
       </div>
@@ -42,7 +42,7 @@
           allowfullscreen=""
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
         </iframe>
-        <a href="{{ url_for('podcast') }}" class="read-more-btn" style="margin-top:16px; display:inline-block;">
+        <a href="{{ url_for('blog.podcast') }}" class="read-more-btn" style="margin-top:16px; display:inline-block;">
           See All Episodes <span>→</span>
         </a>
       </div>
@@ -73,7 +73,7 @@
                   <span class="card-tag">{{ post.category }}</span>
                   <h3>{{ post.title }}</h3>
                   <p>{{ post.excerpt }}</p>
-                  <a href="{{ url_for('post', slug=post.slug) }}" class="read-more-btn">Read More <span>→</span></a>
+                  <a href="{{ url_for('blog.post', slug=post.slug) }}" class="read-more-btn">Read More <span>→</span></a>
                 </div>
               </div>
               {% endfor %}
@@ -84,7 +84,7 @@
                   <span class="card-tag">Relationships</span>
                   <h3>Understanding Healthy Relationships</h3>
                   <p>Learn the key principles that build strong, respectful, and lasting relationships.</p>
-                  <a href="{{ url_for('blog') }}" class="read-more-btn">Read More <span>→</span></a>
+                  <a href="{{ url_for('blog.blog') }}" class="read-more-btn">Read More <span>→</span></a>
                 </div>
               </div>
 
@@ -94,7 +94,7 @@
                   <span class="card-tag">Faith</span>
                   <h3>Growing Closer to God Daily</h3>
                   <p>Simple and practical ways to strengthen your spiritual life every day.</p>
-                  <a href="{{ url_for('blog') }}" class="read-more-btn">Read More <span>→</span></a>
+                  <a href="{{ url_for('blog.blog') }}" class="read-more-btn">Read More <span>→</span></a>
                 </div>
               </div>
 
@@ -104,7 +104,7 @@
                   <span class="card-tag">Family</span>
                   <h3>Raising Children the Godly Way</h3>
                   <p>Guidance on nurturing children with strong values and faith.</p>
-                  <a href="{{ url_for('blog') }}" class="read-more-btn">Read More <span>→</span></a>
+                  <a href="{{ url_for('blog.blog') }}" class="read-more-btn">Read More <span>→</span></a>
                 </div>
               </div>
             {% endif %}

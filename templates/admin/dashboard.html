@@ -13,10 +13,10 @@
         <p>Welcome back, Ezinne 👋</p>
       </div>
       <div class="dashboard-actions">
-        <a href="{{ url_for('create_post') }}" class="btn-primary">
+        <a href="{{ url_for('admin.create_post') }}" class="btn-primary">
           <i class="fas fa-plus"></i> New Post
         </a>
-        <a href="{{ url_for('admin_logout') }}" class="btn-secondary">
+        <a href="{{ url_for('auth.admin_logout') }}" class="btn-secondary">
           <i class="fas fa-sign-out-alt"></i> Logout
         </a>
       </div>
@@ -45,7 +45,7 @@
       <div class="dashboard-section">
         <div class="section-header">
           <h2>Blog Posts</h2>
-          <a href="{{ url_for('create_post') }}" class="btn-primary btn-sm">
+          <a href="{{ url_for('admin.create_post') }}" class="btn-primary btn-sm">
             <i class="fas fa-plus"></i> Add New
           </a>
         </div>
@@ -91,7 +91,7 @@
           <div class="empty-state">
             <i class="fas fa-file-alt"></i>
             <p>No posts yet. Create your first post!</p>
-            <a href="{{ url_for('create_post') }}" class="btn-primary">Create Post</a>
+            <a href="{{ url_for('admin.create_post') }}" class="btn-primary">Create Post</a>
           </div>
         {% endif %}
       </div>
@@ -115,7 +115,7 @@
             </div>
             <p class="message-subject">{{ message.subject }}</p>
             <p class="message-preview">{{ message.message[:100] }}...</p>
-            <a href="{{ url_for('view_message', message_id=message.id) }}"
+            <a href="{{ url_for('admin.view_message', message_id=message.id) }}"
                class="btn-view btn-sm">Read Full Message</a>
           </div>
           {% endfor %}

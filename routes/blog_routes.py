@@ -7,23 +7,41 @@ blog_bp = Blueprint('blog', __name__)
 
 @blog_bp.route('/')
 def index():
-    posts = Post.query.order_by(Post.date_posted.desc()).limit(3).all()
+    posts = Post.query.filter_by(status='published').order_by(Post.date_posted.desc()).limit(3).all()
     return render_template('index.html', posts=posts)
 
 
 @blog_bp.route('/blog')
 def blog():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=6)
-    return render_template('blog.html', posts=posts)
+    category = request.args.get('category', None)
+    search = request.args.get('search', None)
+    
+    query = Post.query.filter_by(status='published')
+    
+    if category:
+        query = query.filter_by(category=category)
+    
+    if search:
+        query = query.filter(
+            (Post.title.ilike(f'%{search}%')) |
+            (Post.excerpt.ilike(f'%{search}%')) |
+            (Post.tags.ilike(f'%{search}%'))
+        )
+    
+    posts = query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=6)
+    categories = db.session.query(Post.category).filter_by(status='published').distinct().all()
+    
+    return render_template('blog.html', posts=posts, categories=categories, current_category=category, search=search)
 
 
 @blog_bp.route('/post/<slug>')
 def post(slug):
-    post = Post.query.filter_by(slug=slug).first_or_404()
+    post = Post.query.filter_by(slug=slug, status='published').first_or_404()
     related = Post.query.filter(
         Post.category == post.category,
-        Post.id != post.id
+        Post.id != post.id,
+        Post.status == 'published'
     ).limit(2).all()
     return render_template('post.html', post=post, related=related)
 

@@ -21,7 +21,13 @@ class Post(db.Model):
     image = db.Column(db.String(500), nullable=True)
     date_posted = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     read_time = db.Column(db.String(20), default='5 min read')
+    status = db.Column(db.String(20), default='draft')  # 'draft' or 'published'
+    is_featured = db.Column(db.Boolean, default=False)
+    tags = db.Column(db.String(200), nullable=True)  # comma-separated tags
     comments = db.relationship('Comment', backref='post', lazy=True)
+
+    def is_published(self):
+        return self.status == 'published'
 
 
 class Comment(db.Model):

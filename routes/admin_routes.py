@@ -16,12 +16,16 @@ def admin_dashboard():
     posts = Post.query.order_by(Post.date_posted.desc()).all()
     messages = Message.query.order_by(Message.date_sent.desc()).all()
     unread = Message.query.filter_by(is_read=False).count()
+    published = Post.query.filter_by(status='published').count()
+    drafts = Post.query.filter_by(status='draft').count()
 
     return render_template(
         'admin/dashboard.html',
         posts=posts,
         messages=messages,
-        unread=unread
+        unread=unread,
+        published=published,
+        drafts=drafts
     )
 
 
@@ -34,6 +38,9 @@ def create_post():
         excerpt = request.form.get('excerpt')
         content = request.form.get('content')
         read_time = request.form.get('read_time')
+        status = request.form.get('status', 'draft')  # draft or published
+        is_featured = request.form.get('is_featured') == 'on'
+        tags = request.form.get('tags', '')
         image_file = request.files.get('image')
 
         if not title or not category or not content:
@@ -60,13 +67,16 @@ def create_post():
             excerpt=excerpt,
             content=content,
             read_time=read_time,
+            status=status,
+            is_featured=is_featured,
+            tags=tags,
             image=image_filename
         )
 
         db.session.add(new_post)
         db.session.commit()
 
-        flash("Post created successfully")
+        flash(f"Post saved as {status}")
         return redirect(url_for('admin.admin_dashboard'))
 
     return render_template('admin/create_post.html')
@@ -116,6 +126,9 @@ def edit_post(post_id):
         post.excerpt = request.form.get('excerpt')
         post.content = request.form.get('content')
         post.read_time = request.form.get('read_time')
+        post.status = request.form.get('status', 'draft')
+        post.is_featured = request.form.get('is_featured') == 'on'
+        post.tags = request.form.get('tags', '')
 
         image_file = request.files.get('image')
 
@@ -124,21 +137,22 @@ def edit_post(post_id):
             post.image = upload_result['secure_url']
 
         db.session.commit()
-        flash("Post updated successfully")
+        flash(f"Post updated and saved as {post.status}")
         return redirect(url_for('admin.admin_dashboard'))
 
     return render_template('admin/create_post.html', post=post)
 
 
-@admin_bp.route('/admin/post/delete/<int:post_id>')
+@admin_bp.route('/admin/post/delete/<int:post_id>', methods=['POST'])
 @login_required
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
+    title = post.title
 
     db.session.delete(post)
     db.session.commit()
 
-    flash("Post deleted successfully")
+    flash(f"Post '{title}' deleted successfully")
     return redirect(url_for('admin.admin_dashboard'))
 
 

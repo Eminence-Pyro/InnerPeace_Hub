@@ -3,16 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="{{ post.excerpt if post else 'InnerPeace Hub blog' }}">
+  <meta name="description" content="{{ post.excerpt if post else 'InnerPeace Hub - A blog about relationships, healing, faith, and personal growth' }}">
   <meta name="keywords" content="relationships, healing, faith, self-discovery, intentional living, podcast, blog">
   <meta property="og:title" content="{% block title %}InnerPeace Hub{% endblock %}">
-  <meta property="og:description" content="{{ post.excerpt if post else 'InnerPeace Hub blog' }}">
-  <meta property="og:image" content="{{ url_for('static', filename='images/' + post.image) if post and post.image else '' }}">
+  <meta property="og:description" content="{{ post.excerpt if post else 'InnerPeace Hub - A blog about relationships, healing, faith, and personal growth' }}">
+  <meta property="og:image" content="{{ url_for('static', filename='images/' + (post.image if post and post.image else 'innerpeacelogo.png')) }}">
   <meta property="og:url" content="{{ request.url }}">
+  <meta name="theme-color" content="#6B2D8B">
   
-  <!-- Favicon -->
-  <link rel="icon" sizes="32x32" href="{{ url_for('static', filename='images/favicon.png') }}">
-  <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/favicon.png') }}">
+  <!-- Favicon - Multiple formats for cross-platform compatibility -->
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='images/site.webmanifest') }}">
     
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -35,7 +39,7 @@
   <header class="navbar">
     <div class="container">
       <div class="logo">
-        <a href="{{ url_for('index') }}">
+        <a href="{{ url_for('blog.index') }}">
           <img src="{{ url_for('static', filename='images/innerpeacelogo.png') }}" alt="InnerPeace Hub Logo">
         </a>
       </div>
@@ -46,11 +50,11 @@
           <span></span>
         </button>
         <ul class="nav-links" id="nav-links">
-          <li><a href="{{ url_for('index') }}">Home</a></li>
-          <li><a href="{{ url_for('blog') }}">Blog</a></li>
-          <li><a href="{{ url_for('podcast') }}">Podcast</a></li>
-          <li><a href="{{ url_for('about') }}">About</a></li>
-          <li><a href="{{ url_for('contact') }}">Contact</a></li>
+          <li><a href="{{ url_for('blog.index') }}">Home</a></li>
+          <li><a href="{{ url_for('blog.blog') }}">Blog</a></li>
+          <li><a href="{{ url_for('blog.podcast') }}">Podcast</a></li>
+          <li><a href="{{ url_for('blog.about') }}">About</a></li>
+          <li><a href="{{ url_for('blog.contact') }}">Contact</a></li>
         </ul>
       </nav>
     </div>
@@ -93,11 +97,11 @@
 
       <div class="footer-links">
         <h4>Quick Links</h4>
-        <p><a href="{{ url_for('index') }}">Home</a></p>
-        <p><a href="{{ url_for('blog') }}">Blog</a></p>
-        <p><a href="{{ url_for('podcast') }}">Podcast</a></p>
-        <p><a href="{{ url_for('about') }}">About</a></p>
-        <p><a href="{{ url_for('contact') }}">Contact</a></p>
+        <p><a href="{{ url_for('blog.index') }}">Home</a></p>
+        <p><a href="{{ url_for('blog.blog') }}">Blog</a></p>
+        <p><a href="{{ url_for('blog.podcast') }}">Podcast</a></p>
+        <p><a href="{{ url_for('blog.about') }}">About</a></p>
+        <p><a href="{{ url_for('blog.contact') }}">Contact</a></p>
       </div>
 
       <div class="footer-contact">

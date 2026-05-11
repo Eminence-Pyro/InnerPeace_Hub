@@ -1,73 +1,28 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Lato', sans-serif;
-}
+/* ===== INNERPEACE HUB STYLESHEET ===== */
+/* Master stylesheet that imports all modular CSS files */
 
-html {
-  overflow-x: clip;
-  scroll-behavior: smooth;
-}
+/* Core Styles */
+@import url('base.css');
+@import url('navbar.css');
+@import url('footer.css');
+@import url('buttons-forms.css');
+@import url('utilities.css');
+@import url('pages.css');
 
-body {
-  background: #FFF9F5;
-  color: #2C2C2C;
-  overflow-x: hidden;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+/* Note: The following sections were moved to dedicated files:
+   - base.css: Global styles, typography, containers
+   - navbar.css: Navigation and hamburger menu
+   - footer.css: Footer and social icons
+   - buttons-forms.css: Buttons, inputs, and form elements
+   - utilities.css: Helper classes, tags, badges
+   - pages.css: Hero, blog cards, carousel
+   - pages-details.css: About, contact, podcast pages
+   - post.css: Blog post article styles
+   - admin.css: Admin dashboard and forms
+   - responsive.css: Media queries for mobile, tablet, desktop
+*/
 
-#progress-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #6B2D8B, #D4A843);
-  width: 0%;
-  z-index: 2000;
-  transition: width 0.1s ease-out;
-}
-
-main {
-  flex: 1;
-  padding-top: 90px;
-}
-
-h1, h2, h3 {
-  font-family: 'Playfair Display', serif;
-  color: #6B2D8B;
-}
-
-p {
-  line-height: 1.6;
-}
-
-section {
-  padding: 60px 0;
-}
-
-.page-header {
-  padding: 60px 0 20px;
-}
-
-.page-header h1 {
-  font-size: 40px;
-  margin-bottom: 10px;
-}
-
-.page-header p {
-  color: #555;
-}
-
-/* Container */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
+/* ===== REMAINING LEGACY STYLES (TO BE ORGANIZED) =====
 
 /* Navbar Styling */
 .navbar {
