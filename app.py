@@ -5,6 +5,7 @@ from flask import jsonify
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timezone
+from dotenv import load_dotenv
 import os
 import uuid
 from slugify import slugify
@@ -12,6 +13,7 @@ import re
 import cloudinary
 import cloudinary.uploader
 
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -31,7 +33,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['CKEDITOR_PKG_TYPE'] = 'standard'
 app.config['CKEDITOR_FILE_UPLOADER'] = 'upload'
 app.config['CKEDITOR_ENABLE_CSRF'] = False
-app.config['UPLOAD_FOLDER'] = os.path.join('static', 'images')
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'webp'}
 app.config['MAX_CONTENT_LENGTH'] = 2 * 1024 * 1024  # 2MB upload limit
 
@@ -40,8 +41,6 @@ cloudinary.config(
     api_key=os.environ.get('CLOUDINARY_API_KEY'),
     api_secret=os.environ.get('CLOUDINARY_API_SECRET')
 )
-
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 ckeditor = CKEditor(app)
@@ -251,6 +250,33 @@ def upload():
             "error": {"message": "Invalid file type"}
         })
 
+    try:
+        upload_result = cloudinary.uploader.upload(file)
+
+        return jsonify({
+            "uploaded": True,
+            "url": upload_result['secure_url']
+        })
+
+    except Exception as e:
+        return jsonify({
+            "uploaded": False,
+            "error": {"message": str(e)}
+        })
+    file = request.files.get('upload')
+
+    if not file or file.filename == '':
+        return jsonify({
+            "uploaded": False,
+            "error": {"message": "No file uploaded"}
+        })
+
+    if not allowed_file(file.filename):
+        return jsonify({
+            "uploaded": False,
+            "error": {"message": "Invalid file type"}
+        })
+
     ext = file.filename.rsplit('.', 1)[1].lower()
     filename = f"{uuid.uuid4().hex}.{ext}"
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -280,8 +306,8 @@ def edit_post(post_id):
         image_file = request.files.get('image')
 
         if image_file and allowed_file(image_file.filename):
-           upload_result = cloudinary.uploader.upload(image_file)
-        post.image = upload_result['secure_url']
+            upload_result = cloudinary.uploader.upload(image_file)
+            post.image = upload_result['secure_url']
 
         db.session.commit()
         flash("Post updated successfully")
@@ -293,11 +319,6 @@ def edit_post(post_id):
 @login_required
 def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
-
-    if post.image:
-        image_path = os.path.join(app.config['UPLOAD_FOLDER'], post.image)
-        if os.path.exists(image_path):
-            os.remove(image_path)
 
     db.session.delete(post)
     db.session.commit()
