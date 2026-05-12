@@ -2197,8 +2197,8 @@ img {
     rgba(212, 168, 67, 0.4) 50%,
     rgba(242, 167, 187, 0.5) 100%
   );
-    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     flex-direction: column;
     align-items: center;
     justify-content: center;
