@@ -276,11 +276,14 @@ window.addEventListener('scroll', () => {
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 window.addEventListener('scroll', () => {
   if (scrollTopBtn) {
-    scrollTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
+    const isVisible = window.scrollY > 300;
+    scrollTopBtn.style.opacity = isVisible ? '1' : '0';
+    scrollTopBtn.style.pointerEvents = isVisible ? 'auto' : 'none';
   }
 });
 if (scrollTopBtn) {
-  scrollTopBtn.addEventListener('click', () => {
+  scrollTopBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }

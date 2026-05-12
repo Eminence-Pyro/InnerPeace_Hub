@@ -10,13 +10,14 @@
   <meta property="og:image" content="{{ url_for('static', filename='images/' + (post.image if post and post.image else 'innerpeacelogo.png')) }}">
   <meta property="og:url" content="{{ request.url }}">
   <meta name="theme-color" content="#6B2D8B">
+  <meta name="color-scheme" content="light dark">
   
   <!-- Favicon - Multiple formats for cross-platform compatibility -->
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
-  <link rel="manifest" href="{{ url_for('static', filename='images/site.webmanifest') }}">
+  <link rel="manifest" type="application/manifest+json" href="{{ url_for('static', filename='images/site.webmanifest') }}">
     
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -44,7 +45,7 @@
         </a>
       </div>
       <nav>
-        <button class="hamburger" id="hamburger">
+        <button aria-label="Toggle navigation" class="hamburger" id="hamburger">
           <span></span>
           <span></span>
           <span></span>
