@@ -3,25 +3,40 @@ const hamburger = document.getElementById('hamburger');
 const navLinks = document.getElementById('nav-links');
 const navOverlay = document.getElementById('nav-overlay');
 
-if (hamburger && navLinks &&navOverlay) hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('active');
-  navLinks.classList.toggle('open');
-  navOverlay.classList.toggle('active');
-});
+if (hamburger && navLinks && navOverlay) {
+  // Toggle menu on hamburger click
+  hamburger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    hamburger.classList.toggle('active');
+    navLinks.classList.toggle('open');
+    navOverlay.classList.toggle('active');
+  });
 
-navOverlay.addEventListener('click', () => {
-  hamburger.classList.remove('active');
-  navLinks.classList.remove('open');
-  navOverlay.classList.remove('active');
-});
-
-navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
+  // Close menu on overlay click
+  navOverlay.addEventListener('click', () => {
     hamburger.classList.remove('active');
     navLinks.classList.remove('open');
     navOverlay.classList.remove('active');
   });
-});
+
+  // Close menu on link click
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      navLinks.classList.remove('open');
+      navOverlay.classList.remove('active');
+    });
+  });
+
+  // Close menu on ESC key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      hamburger.classList.remove('active');
+      navLinks.classList.remove('open');
+      navOverlay.classList.remove('active');
+    }
+  });
+}
 
 // Carousel - only runs if carousel exists on the page
 const track = document.querySelector('.carousel-track');
@@ -260,7 +275,7 @@ window.addEventListener('scroll', () => {
 // Scroll to Top Button
 const scrollTopBtn = document.getElementById('scrollTopBtn');
 window.addEventListener('scroll', () => {
-  if (scollBtn) {
+  if (scrollTopBtn) {
     scrollTopBtn.style.display = window.scrollY > 300 ? 'block' : 'none';
   }
 });

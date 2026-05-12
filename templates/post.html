@@ -52,7 +52,7 @@
             <span class="card-tag">{{ item.category }}</span>
             <h3>{{ item.title }}</h3>
 
-            <a href="{{ url_for('post', slug=item.slug) }}" class="read-more-btn">
+            <a href="{{ url_for('blog.post', slug=item.slug) }}" class="read-more-btn">
               Read More →
             </a>
           </div>

@@ -9,20 +9,28 @@
 @import url('utilities.css');
 @import url('pages.css');
 
-/* Note: The following sections were moved to dedicated files:
-   - base.css: Global styles, typography, containers
-   - navbar.css: Navigation and hamburger menu
-   - footer.css: Footer and social icons
-   - buttons-forms.css: Buttons, inputs, and form elements
-   - utilities.css: Helper classes, tags, badges
-   - pages.css: Hero, blog cards, carousel
-   - pages-details.css: About, contact, podcast pages
-   - post.css: Blog post article styles
-   - admin.css: Admin dashboard and forms
-   - responsive.css: Media queries for mobile, tablet, desktop
-*/
+/* Page-Specific Styles */
+@import url('post-detail.css');
+@import url('admin.css');
+@import url('about.css');
+@import url('podcast-contact.css');
 
-/* ===== REMAINING LEGACY STYLES (TO BE ORGANIZED) =====
+/* Responsive Design - Must be last */
+@import url('responsive.css');
+
+/* Component File Reference:
+   ✓ base.css: Global styles, colors, typography, animations, containers
+   ✓ navbar.css: Navigation bar, hamburger menu, responsive nav
+   ✓ footer.css: Footer layout, social icons, links
+   ✓ buttons-forms.css: Button styles, form elements, inputs, validation
+   ✓ utilities.css: Helper classes, badges, tags, alerts, page headers
+   ✓ pages.css: Hero section, blog cards, carousel, featured posts
+   ✓ post-detail.css: Blog post articles, meta info, related posts
+   ✓ admin.css: Admin dashboard, forms, tables, login, create/edit pages
+   ✓ about.css: About page, founder section, values, services
+   ✓ podcast-contact.css: Podcast episodes, contact form, platform links
+   ✓ responsive.css: Mobile, tablet, desktop media queries (must be last)
+*/
 
 /* Navbar Styling */
 .navbar {
