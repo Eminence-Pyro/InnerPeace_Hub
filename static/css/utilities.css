@@ -1,5 +1,6 @@
 /* ===== UTILITY CLASSES ===== */
 
+/* ===== BADGE & TAG COMPONENTS ===== */
 .section-tag {
   display: inline-block;
   background: linear-gradient(135deg, #6B2D8B, #D4A843);
@@ -36,6 +37,45 @@
   margin-bottom: 12px;
 }
 
+/* ===== CARD COMPONENTS ===== */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(107, 45, 139, 0.12);
+}
+
+.card-header {
+  padding-bottom: 16px;
+  border-bottom: 1px solid #E8D5E0;
+  margin-bottom: 16px;
+}
+
+.card-header h3 {
+  margin: 0;
+  color: #6B2D8B;
+  font-size: 18px;
+}
+
+.card-body {
+  padding: 16px 0;
+}
+
+.card-footer {
+  padding-top: 16px;
+  border-top: 1px solid #E8D5E0;
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== SECTION COMPONENTS ===== */
 .section-subtitle {
   text-align: center;
   color: #888;
@@ -43,6 +83,37 @@
   font-size: 16px;
 }
 
+.section {
+  padding: 60px 0;
+}
+
+.section-light {
+  background: #FFF9F5;
+}
+
+.section-gradient {
+  background: linear-gradient(135deg, #F5E6FF 0%, #FFF9F5 100%);
+}
+
+.section-header {
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+.section-header h2 {
+  font-size: 42px;
+  margin-bottom: 16px;
+  color: #6B2D8B;
+}
+
+.section-header p {
+  font-size: 18px;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ===== PAGE HEADER COMPONENT ===== */
 .page-header {
   padding: 80px 0 40px;
   background: linear-gradient(135deg, #F5E6FF 0%, #FFF9F5 100%);
@@ -65,7 +136,26 @@
   font-size: 16px;
 }
 
-/* Reveal/Scroll Animations */
+/* ===== GRID LAYOUT COMPONENTS ===== */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* ===== REVEAL/SCROLL ANIMATIONS ===== */
 .reveal {
   opacity: 0;
   transform: translateY(40px);
@@ -99,7 +189,7 @@
   transform: translateX(0);
 }
 
-/* Empty State */
+/* ===== STATE COMPONENTS ===== */
 .empty-state {
   text-align: center;
   padding: 40px;
@@ -114,4 +204,32 @@
 
 .empty-state p {
   margin-bottom: 20px;
+}
+
+/* ===== RESPONSIVE GRID ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header h2 {
+    font-size: 32px;
+  }
+
+  .section-header p {
+    font-size: 16px;
+  }
+
+  .section {
+    padding: 40px 0;
+  }
+
+  .page-header {
+    padding: 60px 0 30px;
+  }
+
+  .page-header h1 {
+    font-size: 32px;
+  }
 }

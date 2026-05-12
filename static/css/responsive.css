@@ -13,10 +13,12 @@
   /* Navbar */
   .navbar {
     padding: 16px 0;
+    height: auto;
   }
 
   .navbar .container {
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
     gap: 12px;
   }
 
@@ -26,10 +28,11 @@
 
   nav {
     width: 100%;
+    order: -1;
   }
 
   .hamburger {
-    display: block;
+    display: flex;
   }
 
   .nav-links {
@@ -37,7 +40,8 @@
     top: 70px;
     left: 0;
     width: 100%;
-    height: calc(100vh - 70px);
+    max-height: calc(100vh - 70px);
+    height: auto;
     background: white;
     flex-direction: column;
     padding: 20px;
@@ -45,6 +49,7 @@
     transition: transform 0.3s ease;
     z-index: 998;
     border-right: 1px solid #E8D5E0;
+    overflow-y: auto;
   }
 
   .nav-links.open {
@@ -157,11 +162,30 @@
     grid-template-columns: 1fr;
   }
 
+  .form-row.three {
+    grid-template-columns: 1fr;
+  }
+
   .form-group input,
   .form-group textarea,
   .form-group select {
     padding: 10px;
     font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  /* Button Groups */
+  .btn-group {
+    flex-direction: column;
+  }
+
+  .btn-group.vertical {
+    flex-direction: column;
   }
 
   /* Dashboard */
@@ -335,6 +359,10 @@
     font-size: 22px;
   }
 
+  .admin-login .container {
+    padding: 0 16px;
+  }
+
   /* Flash Messages */
   .flash-messages {
     top: 70px;
@@ -362,6 +390,25 @@
 
   h2 {
     font-size: 16px;
+  }
+
+  /* Hamburger - Extra Small Screens */
+  .hamburger span {
+    width: 22px;
+    height: 2.5px;
+  }
+
+  .navbar {
+    height: 70px;
+  }
+
+  .logo img {
+    max-height: 35px;
+  }
+
+  .nav-links {
+    top: 70px;
+    padding: 16px;
   }
 
   /* Card Styles */

@@ -78,7 +78,13 @@ img {
   z-index: 1500;
   box-shadow: 0 4px 15px rgba(107, 45, 139, 0.3);
   transition: transform 0.3s, opacity 0.3s;
-  transform: translateY(-3px);
+  display: none;
+  opacity: 0;
+}
+
+#scrollTopBtn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(107, 45, 139, 0.4);
 }
 
 /* Flash Messages */

@@ -1,4 +1,6 @@
 /* ===== BUTTONS & FORMS ===== */
+
+/* ===== BUTTON COMPONENTS ===== */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -56,7 +58,33 @@
   justify-content: center;
 }
 
-/* Form Elements */
+.btn-icon {
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon-only {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+}
+
+/* Button Group */
+.btn-group {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-group.vertical {
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===== FORM COMPONENTS ===== */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -68,6 +96,11 @@
   font-weight: 700;
   font-size: 14px;
   color: #2C2C2C;
+}
+
+.form-group.required label::after {
+  content: ' *';
+  color: #e74c3c;
 }
 
 input,
@@ -90,6 +123,11 @@ select:focus {
   border-color: #6B2D8B;
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: #bbb;
+}
+
 .form-error {
   color: #e74c3c;
   font-size: 13px;
@@ -99,8 +137,30 @@ select:focus {
 input.error,
 textarea.error {
   border-color: #e74c3c;
+  background: #fff5f5;
 }
 
+input.success,
+textarea.success {
+  border-color: #4caf50;
+}
+
+/* ===== FORM LAYOUT COMPONENTS ===== */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.form-row.full {
+  grid-template-columns: 1fr;
+}
+
+.form-row.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* ===== FORM STATE COMPONENTS ===== */
 .alert-error {
   background: #ffeaea;
   color: #e74c3c;
@@ -109,4 +169,65 @@ textarea.error {
   margin-bottom: 20px;
   font-size: 14px;
   border-left: 4px solid #e74c3c;
+}
+
+.alert-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  border-left: 4px solid #4caf50;
+}
+
+.alert-warning {
+  background: #fff3e0;
+  color: #e65100;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  border-left: 4px solid #ff9800;
+}
+
+/* ===== CHECKBOX & RADIO STYLES ===== */
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.checkbox-group,
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.checkbox-group label,
+.radio-group label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+/* ===== RESPONSIVE FORMS ===== */
+@media (max-width: 768px) {
+  .form-row,
+  .form-row.three {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-large {
+    width: 100%;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
 }
