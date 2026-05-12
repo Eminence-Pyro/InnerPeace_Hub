@@ -80,6 +80,15 @@
           </div>
           {% else %}
           <form class="contact-form" method="POST" action="{{ url_for('blog.contact') }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              
+              {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  {% for message in messages %}
+                    <div class="alert-error">{{ message }}</div>
+                  {% endfor %}
+                {% endif %}
+              {% endwith %}
 
             <div class="form-group">
               <label for="name">Your Name</label>
