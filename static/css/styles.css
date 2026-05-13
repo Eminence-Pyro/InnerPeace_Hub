@@ -93,7 +93,13 @@ p {
   align-items: center;
   justify-content: center;
   opacity: 0;
+  pointer-events: none;
 }
+#scrollTopBtn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 
 #scrollTopBtn:hover {
   transform: translateY(-4px);
