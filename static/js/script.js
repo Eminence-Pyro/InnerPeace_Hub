@@ -277,8 +277,11 @@ const scrollTopBtn = document.getElementById('scrollTopBtn');
 window.addEventListener('scroll', () => {
   if (scrollTopBtn) {
     const isVisible = window.scrollY > 300;
-    scrollTopBtn.style.opacity = isVisible ? '1' : '0';
-    scrollTopBtn.style.pointerEvents = isVisible ? 'auto' : 'none';
+    if (isVisible) {
+      scrollTopBtn.classList.add('visible');
+    } else {
+      scrollTopBtn.classList.remove('visible');
+    }
   }
 });
 if (scrollTopBtn) {

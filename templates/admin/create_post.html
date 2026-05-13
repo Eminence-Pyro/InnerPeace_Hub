@@ -84,11 +84,10 @@
         <label for="content">Content</label>
 
         {{ ckeditor.load() }}
-        {{ ckeditor.config(name='content') }}
-
         <textarea name="content" id="content">
 {{ post.content if post else '' }}
         </textarea>
+        {{ ckeditor.config(name='content') }}
       </div>
 
       <!-- Image -->

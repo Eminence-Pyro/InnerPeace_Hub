@@ -17,7 +17,20 @@ class Config:
     # CKEditor
     CKEDITOR_PKG_TYPE = 'standard'
     CKEDITOR_FILE_UPLOADER = 'admin.upload'
-    CKEDITOR_ENABLE_CSRF = False  # Enable CSRF protection
+    CKEDITOR_ENABLE_CSRF = False
+    CKEDITOR_TOOLBAR = [
+        ['Undo', 'Redo'],
+        ['Format', 'FontSize'],
+        ['Bold', 'Italic', 'Underline', 'StrikeThrough'],
+        ['TextColor', 'BGColor'],
+        ['Link', 'Unlink', 'Anchor'],
+        ['Image', 'Table'],
+        ['NumberedList', 'BulletedList', 'Indent', 'Outdent'],
+        ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+        ['Source'],
+        ['RemoveFormat', 'ShowBlocks']
+    ]
+    CKEDITOR_EXTRA_ALLOWED_CONTENT = 'div(*); span(*); a[*]{*}(*); img[*]{*}(*)'
     
     # File upload
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}

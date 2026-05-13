@@ -12,6 +12,7 @@ from routes.auth_routes import auth_bp
 from routes.admin_routes import admin_bp
 
 
+
 def create_app(config_class=Config):
     """Application factory"""
     app = Flask(__name__)

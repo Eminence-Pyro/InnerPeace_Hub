@@ -1433,6 +1433,23 @@ p {
   color: #2C2C2C;
 }
 
+/* Global input Shared input styles visibility */
+input, textarea, select {
+  color: #2C2C2C;
+  font-family: 'Lato', sans-serif;
+}
+
+/* Fix browser autofill background overriding background and text color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #2C2C2C;
+  -webkit-box-shadow: 0 0 0px 1000px #FFF9F5 inset;
+  transition: backgroun-color 5000s ease-in-out 0s;
+}
+
 /* Button variants */
 .btn-primary {
   display: inline-flex;
@@ -1524,6 +1541,13 @@ p {
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #FFF9F5 0%, #F5E6FF 100%);
+}
+
+.admin-login .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
 }
 
 .login-card {
