@@ -18,18 +18,13 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-   # Initialize extensions
+    # Initialize extensions
     db.init_app(app)
     CKEditor(app)
 
     # CSRF Protection
     csrf = CSRFProtect()
     csrf.init_app(app)
-
-    # Temporary exemptions for standard HTML forms
-    csrf.exempt(auth_bp)
-    csrf.exempt(admin_bp)
-    csrf.exempt(blog_bp)
     
     # Configure Cloudinary
     cloudinary.config(
