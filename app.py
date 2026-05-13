@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_ckeditor import CKEditor
 from flask_login import LoginManager
@@ -5,7 +6,10 @@ from werkzeug.security import generate_password_hash
 from flask_wtf.csrf import CSRFProtect
 import cloudinary
 
-from config import Config
+from config import ProductionConfig, DevelopmentConfig
+
+config = ProductionConfig if os.environ.get('FLASK_ENV') == 'production' else DevelopmentConfig
+
 from models import db, Admin
 from routes.blog_routes import blog_bp
 from routes.auth_routes import auth_bp
@@ -13,7 +17,7 @@ from routes.admin_routes import admin_bp
 
 
 
-def create_app(config_class=Config):
+def create_app(config_class=config):
     """Application factory"""
     app = Flask(__name__)
     app.config.from_object(config_class)

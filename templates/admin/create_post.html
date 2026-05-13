@@ -25,6 +25,8 @@
     {% endwith %}
 
     <form method="POST" enctype="multipart/form-data" class="create-form">
+      
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
       <!-- Title -->
       <div class="form-group">
@@ -87,7 +89,18 @@
         <textarea name="content" id="content">
 {{ post.content if post else '' }}
         </textarea>
-        {{ ckeditor.config(name='content') }}
+        {{ ckeditor.config(
+            name='content',
+            toolbar=[
+                ['Source', '-', 'Bold', 'Italic', 'Underline'],
+                ['NumberedList', 'BulletedList'],
+                ['Link', 'Unlink'],
+                ['Image', 'Table'],
+                ['Format', 'FontSize'],
+                ['TextColor', 'BGColor'],
+                ['Maximize']
+            ]
+        ) }}
       </div>
 
       <!-- Image -->
@@ -102,6 +115,31 @@
         {% endif %}
 
         <input type="file" id="image" name="image" accept="image/*" />
+      </div>
+      
+      <!-- Status -->
+      <div class="form-group">
+        <label for="status">Post Status</label>
+      
+        <select id="status" name="status">
+      
+          <option value="draft"
+            {% if post and post.status == 'draft' %}
+              selected
+            {% endif %}
+          >
+            Save as Draft
+          </option>
+      
+          <option value="published"
+            {% if post and post.status == 'published' %}
+              selected
+            {% endif %}
+          >
+            Publish
+          </option>
+      
+        </select>
       </div>
 
       <!-- Submit -->

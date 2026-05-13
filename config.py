@@ -1,7 +1,8 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).parent / '.env')
 
 class Config:
     """Base configuration"""
@@ -13,6 +14,21 @@ class Config:
         database_url = database_url.replace("postgres://", "postgresql://", 1)
     SQLALCHEMY_DATABASE_URI = database_url or 'sqlite:///innerpeacehub.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Connection pool — prevents dropped connection errors
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,        # tests connection before using it
+        "pool_recycle": 300,          # recycles connections every 5 minutes
+        "pool_size": 5,
+        "max_overflow": 2,
+        "connect_args": {
+            "connect_timeout": 10,
+            "keepalives": 1,
+            "keepalives_idle": 30,
+            "keepalives_interval": 5,
+            "keepalives_count": 3,
+        }
+    }
     
     # CKEditor
     CKEDITOR_PKG_TYPE = 'standard'
@@ -42,8 +58,16 @@ class Config:
     CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
     
     # Security
-    SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = 'Lax'
     PERMANENT_SESSION_LIFETIME = 2592000  # 30 days in seconds
 
+
+class DevelopmentConfig(Config):
+    """Local machine settings"""
+    SESSION_COOKIE_SECURE = False  # Works on plain HTTP locally
+
+
+class ProductionConfig(Config):
+    """Live server settings"""
+    SESSION_COOKIE_SECURE = True  # Requires HTTPS on Render

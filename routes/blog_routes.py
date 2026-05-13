@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask_login import current_user
 from models import Post, Message, db
 from utils import generate_slug
 
@@ -37,7 +38,13 @@ def blog():
 
 @blog_bp.route('/post/<slug>')
 def post(slug):
-    post = Post.query.filter_by(slug=slug, status='published').first_or_404()
+    if current_user.is_authenticated:
+        # Admins can preview any post including drafts
+        post = Post.query.filter_by(slug=slug).first_or_404()
+    else:
+        # Public only sees published posts
+        post = Post.query.filter_by(slug=slug, status='published').first_or_404()
+
     related = Post.query.filter(
         Post.category == post.category,
         Post.id != post.id,

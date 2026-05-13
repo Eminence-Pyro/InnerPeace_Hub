@@ -295,6 +295,7 @@ MIT License
 - Images via Cloudinary
 - Icons via Font Awesome
 - Editor via CKEditor
+- Developed by Divine Nnata
 
 ---
 
