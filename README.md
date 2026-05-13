@@ -145,7 +145,7 @@ python app.py
 Visit: `http://localhost:5000`
 
 5. **Admin Access**
-- Default admin: `ezinne` / `innerpeace2026`
+- Default admin credentials are set via environment variables (see `.env.example`)
 - Change password immediately after first login
 - Admin panel: `http://localhost:5000/admin/login`
 
@@ -287,7 +287,7 @@ Dashboard displays:
 
 ## 📄 License
 
-[Add appropriate license - MIT, Apache, etc.]
+MIT License
 
 ## 🙏 Acknowledgments
 
