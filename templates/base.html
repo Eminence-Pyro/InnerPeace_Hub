@@ -57,6 +57,12 @@
           <li><a href="{{ url_for('blog.about') }}">About</a></li>
           <li><a href="{{ url_for('blog.contact') }}">Contact</a></li>
         </ul>
+
+        <!-- Dark Mode Toggle -->
+        <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <i class="fas fa-moon" id="darkModeIcon"></i>
+        </button>
+
       </nav>
     </div>
   </header>
@@ -124,5 +130,36 @@
   <button id="scrollTopBtn" aria-label="Scroll to Top">
     <i class="fas fa-arrow-up"></i>
   </button>
+
+  <!-- Dark Mode Script -->
+  <script>
+    (function() {
+      const toggle = document.getElementById('darkModeToggle');
+      const icon   = document.getElementById('darkModeIcon');
+      const saved  = localStorage.getItem('theme');
+
+      // Apply saved preference immediately (before paint)
+      if (saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (icon) { icon.classList.replace('fa-moon', 'fa-sun'); }
+      }
+
+      if (toggle) {
+        toggle.addEventListener('click', () => {
+          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          if (isDark) {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
+            icon.classList.replace('fa-sun', 'fa-moon');
+          } else {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            icon.classList.replace('fa-moon', 'fa-sun');
+          }
+        });
+      }
+    })();
+  </script>
+
 </body>
 </html>
