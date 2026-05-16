@@ -21,6 +21,7 @@
     {% if post.image %}
       <div class="post-image">
         <img src="{{ post.image }}" alt="{{ post.title }}">
+      </div>
     {% else %}
       <div class="post-image">
         <img src="{{ url_for('static', filename='images/relationship.jpg') }}" alt="{{ post.title }}">
@@ -32,6 +33,90 @@
       {{ post.content | safe }}
     </div>
 
+    <!-- Social Sharing -->
+    <div class="share-section">
+      <p class="share-label"><i class="fas fa-share-alt"></i> Share this post</p>
+      <div class="share-buttons">
+
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.url | urlencode }}"
+           target="_blank" rel="noopener" class="share-btn share-facebook" title="Share on Facebook">
+          <i class="fab fa-facebook-f"></i>
+          <span>Facebook</span>
+        </a>
+
+        <!-- X / Twitter -->
+        <a href="https://twitter.com/intent/tweet?url={{ request.url | urlencode }}&text={{ post.title | urlencode }}"
+           target="_blank" rel="noopener" class="share-btn share-twitter" title="Share on X">
+          <i class="fab fa-x-twitter"></i>
+          <span>X / Twitter</span>
+        </a>
+
+        <!-- WhatsApp -->
+        <a href="https://wa.me/?text={{ (post.title ~ ' ' ~ request.url) | urlencode }}"
+           target="_blank" rel="noopener" class="share-btn share-whatsapp" title="Share on WhatsApp">
+          <i class="fab fa-whatsapp"></i>
+          <span>WhatsApp</span>
+        </a>
+
+        <!-- Telegram -->
+        <a href="https://t.me/share/url?url={{ request.url | urlencode }}&text={{ post.title | urlencode }}"
+           target="_blank" rel="noopener" class="share-btn share-telegram" title="Share on Telegram">
+          <i class="fab fa-telegram-plane"></i>
+          <span>Telegram</span>
+        </a>
+
+        <!-- LinkedIn -->
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.url | urlencode }}"
+           target="_blank" rel="noopener" class="share-btn share-linkedin" title="Share on LinkedIn">
+          <i class="fab fa-linkedin-in"></i>
+          <span>LinkedIn</span>
+        </a>
+
+        <!-- Pinterest -->
+        <a href="https://pinterest.com/pin/create/button/?url={{ request.url | urlencode }}&description={{ post.title | urlencode }}{% if post.image %}&media={{ post.image | urlencode }}{% endif %}"
+           target="_blank" rel="noopener" class="share-btn share-pinterest" title="Share on Pinterest">
+          <i class="fab fa-pinterest-p"></i>
+          <span>Pinterest</span>
+        </a>
+
+        <!-- Reddit -->
+        <a href="https://reddit.com/submit?url={{ request.url | urlencode }}&title={{ post.title | urlencode }}"
+           target="_blank" rel="noopener" class="share-btn share-reddit" title="Share on Reddit">
+          <i class="fab fa-reddit-alien"></i>
+          <span>Reddit</span>
+        </a>
+
+        <!-- Copy Link -->
+        <button onclick="copyPostLink()" class="share-btn share-copy" title="Copy link">
+          <i class="fas fa-link"></i>
+          <span id="copy-label">Copy Link</span>
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Newsletter Signup -->
+<section class="newsletter-section">
+  <div class="container">
+    <div class="newsletter-card">
+      <div class="newsletter-icon">✉️</div>
+      <h2>Stay in the loop</h2>
+      <p>Get new posts on relationships, healing, and faith delivered straight to your inbox. No spam, ever.</p>
+      <form action="{{ url_for('blog.subscribe') }}" method="POST" class="newsletter-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="newsletter-inputs">
+          <input type="text" name="name" placeholder="Your first name (optional)" class="newsletter-input" />
+          <input type="email" name="email" placeholder="Your email address" required class="newsletter-input" />
+        </div>
+        <button type="submit" class="btn-primary newsletter-btn">
+          <i class="fas fa-paper-plane"></i> Subscribe
+        </button>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -40,42 +125,39 @@
 <section class="related-section">
   <div class="container">
     <h2>Related Posts</h2>
-
     <div class="blog-grid">
       {% for item in related %}
         <div class="blog-card">
           {% if item.image %}
-            <img src="{{ url_for('static', filename='images/' + item.image) }}">
+            <img src="{{ item.image }}" alt="{{ item.title }}">
           {% endif %}
-
           <div class="card-body">
             <span class="card-tag">{{ item.category }}</span>
             <h3>{{ item.title }}</h3>
-
             <a href="{{ url_for('blog.post', slug=item.slug) }}" class="read-more-btn">
               Read More →
             </a>
           </div>
         </div>
-        <div id="disqus_thread"></div>
-
-        <script>
-        var disqus_config = function () {
-        this.page.url = window.location.href;
-        this.page.identifier = "{{ post.id }}";
-        };
-        
-        (function() {
-        var d = document, s = d.createElement('script');
-        s.src = 'https://innerpeacehub.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-        })();
-        </script>
       {% endfor %}
     </div>
   </div>
 </section>
 {% endif %}
 
+<!-- Disqus Comments -->
+<div id="disqus_thread" style="max-width: 800px; margin: 0 auto; padding: 0 20px 60px;"></div>
+
+{% endblock %}
+
+{% block extra_head %}
+<script>
+function copyPostLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const label = document.getElementById('copy-label');
+    label.textContent = 'Copied!';
+    setTimeout(() => label.textContent = 'Copy Link', 2000);
+  });
+}
+</script>
 {% endblock %}
