@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import current_user
-from models import Post, Message, Subscriber, db
+from models import Post, Message, Subscriber, PodcastEpisode, Comment, db
 from utils import generate_slug
 
 blog_bp = Blueprint('blog', __name__)
@@ -60,7 +60,8 @@ def about():
 
 @blog_bp.route('/podcast')
 def podcast():
-    return render_template('podcast.html')
+    episodes = PodcastEpisode.query.filter_by(status='published').order_by(PodcastEpisode.date_published.desc()).all()
+    return render_template('podcast.html', episodes=episodes)
 
 
 @blog_bp.route('/contact', methods=['GET', 'POST'])
@@ -113,3 +114,21 @@ def subscribe():
     db.session.commit()
     flash("You're subscribed! Welcome to the InnerPeace Hub community 🎉")
     return redirect(request.referrer or url_for('blog.index'))
+
+@blog_bp.route('/post/<slug>/comment', methods=['POST'])
+def add_comment(slug):
+    post = Post.query.filter_by(slug=slug, status='published').first_or_404()
+    name = request.form.get('name', '').strip()
+    email = request.form.get('email', '').strip()
+    body = request.form.get('body', '').strip()
+
+    if not name or not email or not body:
+        flash('All comment fields are required.')
+        return redirect(url_for('blog.post', slug=slug) + '#comments')
+
+    comment = Comment(post_id=post.id, name=name, email=email, body=body)
+    db.session.add(comment)
+    db.session.commit()
+    flash('Your comment has been posted!')
+    return redirect(url_for('blog.post', slug=slug) + '#comments')
+
