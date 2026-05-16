@@ -4,6 +4,7 @@ from flask_ckeditor import CKEditor
 from flask_login import LoginManager
 from werkzeug.security import generate_password_hash
 from flask_wtf.csrf import CSRFProtect
+from flask_migrate import Migrate
 import cloudinary
 
 from config import ProductionConfig, DevelopmentConfig
@@ -16,7 +17,6 @@ from routes.auth_routes import auth_bp
 from routes.admin_routes import admin_bp
 
 
-
 def create_app(config_class=config):
     """Application factory"""
     app = Flask(__name__)
@@ -25,11 +25,12 @@ def create_app(config_class=config):
     # Initialize extensions
     db.init_app(app)
     CKEditor(app)
+    Migrate(app, db)
 
     # CSRF Protection
     csrf = CSRFProtect()
     csrf.init_app(app)
-    
+
     # Configure Cloudinary
     cloudinary.config(
         cloud_name=app.config.get('CLOUDINARY_CLOUD_NAME'),
@@ -50,43 +51,18 @@ def create_app(config_class=config):
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
 
-    # Initialize database and create admin user
+    # Initialize database and seed default admin
     with app.app_context():
         db.create_all()
-        
-        # Handle schema migrations for existing databases
-        try:
-            from sqlalchemy import inspect, text
-            inspector = inspect(db.engine)
-            
-            # Check if Post table exists and has the new columns
-            if 'post' in inspector.get_table_names():
-                columns = [col['name'] for col in inspector.get_columns('post')]
-                
-                # Add missing columns if they don't exist
-                with db.engine.begin() as conn:
-                    if 'status' not in columns:
-                        conn.execute(text("ALTER TABLE post ADD COLUMN status VARCHAR(20) DEFAULT 'draft'"))
-                        print('Added status column to post table')
-                    
-                    if 'is_featured' not in columns:
-                        conn.execute(text("ALTER TABLE post ADD COLUMN is_featured BOOLEAN DEFAULT FALSE"))
-                        print('Added is_featured column to post table')
-                    
-                    if 'tags' not in columns:
-                        conn.execute(text("ALTER TABLE post ADD COLUMN tags VARCHAR(200)"))
-                        print('Added tags column to post table')
-        except Exception as e:
-            print(f'Schema migration note: {e}')
-        
+
         if not Admin.query.first():
             admin = Admin(
                 username='ezinne',
-                password=generate_password_hash('innerpeace2026')
+                password=generate_password_hash(os.environ.get('ADMIN_PASSWORD', 'changeme'))
             )
             db.session.add(admin)
             db.session.commit()
-            print('Admin created: username=ezinne password=innerpeace2026')
+            print('Default admin created. Set ADMIN_PASSWORD in your .env file.')
 
     return app
 
@@ -96,4 +72,5 @@ app = create_app()
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    app.run(debug=debug)
