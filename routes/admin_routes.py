@@ -4,7 +4,7 @@ import cloudinary
 import cloudinary.uploader
 from flask_login import login_required
 from slugify import slugify
-from models import Post, Message, db
+from models import Subscriber, Post, Message, db
 from utils import allowed_file, generate_slug
 
 admin_bp = Blueprint('admin', __name__)
@@ -170,3 +170,9 @@ def view_message(message_id):
         messages=Message.query.order_by(Message.date_sent.desc()).all(),
         unread=Message.query.filter_by(is_read=False).count()
     )
+
+@admin_bp.route('/subscribers')
+@login_required
+def subscribers():
+    subs = Subscriber.query.order_by(Subscriber.date_subscribed.desc()).all()
+    return render_template('admin/subscribers.html', subscribers=subs)
