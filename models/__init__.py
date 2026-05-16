@@ -54,3 +54,16 @@ class Subscriber(db.Model):
     name = db.Column(db.String(100), nullable=True)
     date_subscribed = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_active = db.Column(db.Boolean, default=True)
+
+class PodcastEpisode(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    episode_number = db.Column(db.Integer, nullable=True)
+    audio_url = db.Column(db.String(500), nullable=True)       # Cloudinary hosted audio
+    spotify_url = db.Column(db.String(500), nullable=True)     # optional Spotify embed
+    cover_image = db.Column(db.String(500), nullable=True)
+    duration = db.Column(db.String(20), nullable=True)         # e.g. "34 min"
+    date_published = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    status = db.Column(db.String(20), default='published')     # published / draft
+
