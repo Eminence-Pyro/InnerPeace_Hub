@@ -145,8 +145,74 @@
 </section>
 {% endif %}
 
-<!-- Disqus Comments -->
-<div id="disqus_thread" style="max-width: 800px; margin: 0 auto; padding: 0 20px 60px;"></div>
+
+<!-- Comments Section -->
+<section class="comments-section" id="comments">
+  <div class="container">
+    <div class="comments-inner">
+
+      <h2 class="comments-title">
+        <i class="fas fa-comments"></i>
+        {{ post.comments|length }} Comment{{ 's' if post.comments|length != 1 else '' }}
+      </h2>
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="flash-message">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- Existing Comments -->
+      {% if post.comments %}
+        <div class="comments-list">
+          {% for comment in post.comments | sort(attribute='date_posted') %}
+          <div class="comment-card">
+            <div class="comment-avatar">{{ comment.name[0] | upper }}</div>
+            <div class="comment-body">
+              <div class="comment-meta">
+                <strong>{{ comment.name }}</strong>
+                <span>{{ comment.date_posted.strftime('%B %d, %Y') }}</span>
+              </div>
+              <p>{{ comment.body }}</p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Comment Form -->
+      <div class="comment-form-wrapper">
+        <h3>Leave a comment</h3>
+        <form method="POST" action="{{ url_for('blog.add_comment', slug=post.slug) }}" class="comment-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <div class="comment-form-row">
+            <div class="form-group">
+              <label for="c-name">Your Name *</label>
+              <input type="text" id="c-name" name="name" required placeholder="Jane Doe" />
+            </div>
+            <div class="form-group">
+              <label for="c-email">Email * <small>(won't be shown)</small></label>
+              <input type="email" id="c-email" name="email" required placeholder="jane@email.com" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="c-body">Your Comment *</label>
+            <textarea id="c-body" name="body" rows="4" required
+                      placeholder="Share your thoughts..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-paper-plane"></i> Post Comment
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 
 {% endblock %}
 
