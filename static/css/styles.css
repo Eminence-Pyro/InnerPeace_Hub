@@ -2395,3 +2395,129 @@ select:-webkit-autofill {
   line-height: 1.7;
   margin-bottom: 32px;
 }
+
+
+/* ===========================
+   Social Share Buttons
+   =========================== */
+.share-section {
+  margin: 48px 0 32px;
+  padding-top: 32px;
+  border-top: 1px solid #e8e0f0;
+}
+
+.share-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #6B2D8B;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.share-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-2px);
+  color: #fff;
+}
+
+.share-facebook  { background: #1877F2; }
+.share-twitter   { background: #000; }
+.share-whatsapp  { background: #25D366; }
+.share-telegram  { background: #229ED9; }
+.share-linkedin  { background: #0A66C2; }
+.share-pinterest { background: #E60023; }
+.share-reddit    { background: #FF4500; }
+.share-copy      { background: #6B2D8B; }
+
+@media (max-width: 600px) {
+  .share-btn span { display: none; }
+  .share-btn { padding: 10px 13px; font-size: 1rem; }
+}
+
+
+/* ===========================
+   Newsletter Section
+   =========================== */
+.newsletter-section {
+  background: linear-gradient(135deg, #f3e8ff 0%, #fff9f0 100%);
+  padding: 60px 20px;
+}
+
+.newsletter-card {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.newsletter-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.newsletter-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.9rem;
+  color: #2C2C2C;
+  margin-bottom: 10px;
+}
+
+.newsletter-card p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.newsletter-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.newsletter-input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: 'Lato', sans-serif;
+  color: #2C2C2C;
+  background: #fff;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: #6B2D8B;
+}
+
+.newsletter-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 14px;
+  font-size: 1rem;
+}
