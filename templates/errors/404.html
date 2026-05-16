@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found — InnerPeace Hub{% endblock %}
+
+{% block content %}
+<section class="error-page">
+  <div class="container">
+    <div class="error-content">
+      <h1 class="error-code">404</h1>
+      <h2 class="error-title">Page Not Found</h2>
+      <p class="error-message">Looks like this page took a journey inward and never came back. Let's get you somewhere familiar.</p>
+      <a href="{{ url_for('blog.index') }}" class="btn-primary">
+        <i class="fas fa-home"></i> Back to Home
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}
