@@ -47,3 +47,10 @@ class Message(db.Model):
     message = db.Column(db.Text, nullable=False)
     date_sent = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     is_read = db.Column(db.Boolean, default=False)
+
+class Subscriber(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=True)
+    date_subscribed = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    is_active = db.Column(db.Boolean, default=True)
