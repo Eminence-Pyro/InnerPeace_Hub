@@ -4,7 +4,7 @@ import cloudinary
 import cloudinary.uploader
 from flask_login import login_required
 from slugify import slugify
-from models import Subscriber, Post, Message, db
+from models import Subscriber, Post, Message, PodcastEpisode, db
 from utils import allowed_file, generate_slug
 
 admin_bp = Blueprint('admin', __name__)
@@ -176,3 +176,106 @@ def view_message(message_id):
 def subscribers():
     subs = Subscriber.query.order_by(Subscriber.date_subscribed.desc()).all()
     return render_template('admin/subscribers.html', subscribers=subs)
+
+# ─── Podcast Episodes ──────────────────────────────────────
+
+@admin_bp.route('/admin/podcast')
+@login_required
+def podcast_list():
+    episodes = PodcastEpisode.query.order_by(PodcastEpisode.date_published.desc()).all()
+    return render_template('admin/podcast_list.html', episodes=episodes)
+
+
+@admin_bp.route('/admin/podcast/create', methods=['GET', 'POST'])
+@login_required
+def create_episode():
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        episode_number = request.form.get('episode_number') or None
+        spotify_url = request.form.get('spotify_url', '').strip()
+        duration = request.form.get('duration', '').strip()
+        status = request.form.get('status', 'published')
+        audio_file = request.files.get('audio_file')
+        cover_file = request.files.get('cover_image')
+
+        if not title:
+            flash('Episode title is required.')
+            return redirect(url_for('admin.create_episode'))
+
+        audio_url = None
+        if audio_file and audio_file.filename:
+            result = cloudinary.uploader.upload(
+                audio_file,
+                resource_type='video',   # Cloudinary uses 'video' for audio files
+                folder='innerpeacehub/podcasts'
+            )
+            audio_url = result['secure_url']
+
+        cover_url = None
+        if cover_file and allowed_file(cover_file.filename):
+            result = cloudinary.uploader.upload(cover_file, folder='innerpeacehub/podcast_covers')
+            cover_url = result['secure_url']
+
+        episode = PodcastEpisode(
+            title=title,
+            description=description,
+            episode_number=int(episode_number) if episode_number else None,
+            audio_url=audio_url,
+            spotify_url=spotify_url or None,
+            cover_image=cover_url,
+            duration=duration or None,
+            status=status
+        )
+        db.session.add(episode)
+        db.session.commit()
+        flash(f"Episode '{title}' saved.")
+        return redirect(url_for('admin.podcast_list'))
+
+    return render_template('admin/create_episode.html')
+
+
+@admin_bp.route('/admin/podcast/edit/<int:episode_id>', methods=['GET', 'POST'])
+@login_required
+def edit_episode(episode_id):
+    episode = PodcastEpisode.query.get_or_404(episode_id)
+
+    if request.method == 'POST':
+        episode.title = request.form.get('title', '').strip()
+        episode.description = request.form.get('description', '').strip()
+        ep_num = request.form.get('episode_number')
+        episode.episode_number = int(ep_num) if ep_num else None
+        episode.spotify_url = request.form.get('spotify_url', '').strip() or None
+        episode.duration = request.form.get('duration', '').strip() or None
+        episode.status = request.form.get('status', 'published')
+
+        audio_file = request.files.get('audio_file')
+        if audio_file and audio_file.filename:
+            result = cloudinary.uploader.upload(
+                audio_file,
+                resource_type='video',
+                folder='innerpeacehub/podcasts'
+            )
+            episode.audio_url = result['secure_url']
+
+        cover_file = request.files.get('cover_image')
+        if cover_file and allowed_file(cover_file.filename):
+            result = cloudinary.uploader.upload(cover_file, folder='innerpeacehub/podcast_covers')
+            episode.cover_image = result['secure_url']
+
+        db.session.commit()
+        flash('Episode updated.')
+        return redirect(url_for('admin.podcast_list'))
+
+    return render_template('admin/create_episode.html', episode=episode)
+
+
+@admin_bp.route('/admin/podcast/delete/<int:episode_id>', methods=['POST'])
+@login_required
+def delete_episode(episode_id):
+    episode = PodcastEpisode.query.get_or_404(episode_id)
+    db.session.delete(episode)
+    db.session.commit()
+    flash('Episode deleted.')
+    return redirect(url_for('admin.podcast_list'))
+
