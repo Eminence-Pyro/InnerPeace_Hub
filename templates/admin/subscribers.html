@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscribers — InnerPeace Hub Admin{% endblock %}
+
+{% block content %}
+<section class="admin-dashboard">
+  <div class="container">
+
+    <div class="dashboard-header">
+      <div>
+        <h1>Newsletter Subscribers</h1>
+        <p>{{ subscribers|length }} total subscriber{{ 's' if subscribers|length != 1 else '' }}</p>
+      </div>
+      <a href="{{ url_for('admin.dashboard') }}" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Dashboard
+      </a>
+    </div>
+
+    {% if subscribers %}
+    <div class="table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Date Subscribed</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sub in subscribers %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ sub.name or '—' }}</td>
+            <td>{{ sub.email }}</td>
+            <td>
+              <span class="status-badge status-{{ 'published' if sub.is_active else 'draft' }}">
+                {{ 'Active' if sub.is_active else 'Unsubscribed' }}
+              </span>
+            </td>
+            <td>{{ sub.date_subscribed.strftime('%b %d, %Y') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-envelope-open"></i>
+      <p>No subscribers yet. Share your posts and watch them roll in!</p>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}
