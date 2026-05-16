@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block title %}Podcast - InnerPeace Hub{% endblock %}
 
 {% block content %}
@@ -20,12 +19,13 @@
         <div class="podcast-intro-text reveal-left">
           <h2>About The Podcast</h2>
           <p>InnerPeace Hub Podcast is a safe space where Ezinne Obinwa dives deep into the topics that matter most — relationships, faith, healing, self-discovery and intentional living.</p>
-          <p>Whether you're navigating heartbreak, seeking spiritual growth, or simply looking for a moment of peace in a busy world — this podcast is for you.</p>
+          <p>Whether you're navigating heartbreak, seeking spiritual growth, or simply looking for a moment of peace — this podcast is for you.</p>
           <div class="podcast-platforms">
             <p>Listen on:</p>
             <div class="platform-links">
-             <a href="https://open.spotify.com/show/0a9u6z54GktrZsLCq3qI0f" target="_blank" class="platform-btn">
-               <i class="fab fa-spotify"></i> Spotify</a>
+              <a href="https://open.spotify.com/show/0a9u6z54GktrZsLCq3qI0f" target="_blank" class="platform-btn">
+                <i class="fab fa-spotify"></i> Spotify
+              </a>
               <a href="#" class="platform-btn">
                 <i class="fas fa-podcast"></i> Apple Podcasts
               </a>
@@ -43,49 +43,90 @@
   <!-- Episodes -->
   <section class="episodes">
     <div class="container">
-      <h2>Latest Episodes</h2>
+      <h2>Episodes</h2>
       <p class="section-subtitle">New episodes dropping regularly</p>
 
-      <div class="episode-card reveal">
-        <div class="episode-header">
-          <span class="card-tag">Episode 1</span>
-          <span class="episode-date"><i class="fas fa-calendar"></i> 2025</span>
-        </div>
-        <h3>Healing After Heartbreak</h3>
-        <p>Ezinne shares practical and faith-based steps to heal, rebuild your confidence, and find peace after emotional pain.</p>
-        <iframe style="border-radius:12px"
-          src="https://open.spotify.com/embed/episode/7makk4oTQel546B0PZlDM5"
-          width="100%" height="152" frameBorder="0"
-          allowfullscreen=""
-          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
-        </iframe>
-        <div class="episode-reactions">
-          <div class="reaction-buttons">
-            <button class="reaction-btn" data-reaction="love">
-              ❤️ <span class="reaction-label">Love</span>
-              <span class="reaction-count">0</span>
-            </button>
-            <button class="reaction-btn" data-reaction="pray">
-              🙏 <span class="reaction-label">Inspired</span>
-              <span class="reaction-count">0</span>
-            </button>
-            <button class="reaction-btn" data-reaction="insightful">
-              💡 <span class="reaction-label">Insightful</span>
-              <span class="reaction-count">0</span>
-            </button>
-            <button class="reaction-btn" data-reaction="fire">
-              🔥 <span class="reaction-label">Fire</span>
-              <span class="reaction-count">0</span>
-            </button>
-            <button class="reaction-btn" data-reaction="heal">
-              🌿 <span class="reaction-label">Healing</span>
-              <span class="reaction-count">0</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      {% if episodes %}
+        {% for ep in episodes %}
+        <div class="episode-card reveal">
 
-      <!-- Add more episodes below as they are published -->
+          <div class="episode-header">
+            {% if ep.episode_number %}
+              <span class="card-tag">Episode {{ ep.episode_number }}</span>
+            {% endif %}
+            <span class="episode-date">
+              <i class="fas fa-calendar"></i>
+              {{ ep.date_published.strftime('%B %d, %Y') }}
+            </span>
+            {% if ep.duration %}
+              <span class="episode-duration">
+                <i class="fas fa-clock"></i> {{ ep.duration }}
+              </span>
+            {% endif %}
+          </div>
+
+          <div class="episode-body">
+            {% if ep.cover_image %}
+              <img src="{{ ep.cover_image }}" alt="{{ ep.title }}" class="episode-cover" />
+            {% endif %}
+            <div class="episode-text">
+              <h3>{{ ep.title }}</h3>
+              {% if ep.description %}
+                <p>{{ ep.description }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Spotify embed if available -->
+          {% if ep.spotify_url %}
+            <iframe style="border-radius:12px; margin-top:16px;"
+              src="{{ ep.spotify_url }}"
+              width="100%" height="152" frameBorder="0"
+              allowfullscreen=""
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+            </iframe>
+          {% endif %}
+
+          <!-- Native audio player if file uploaded directly -->
+          {% if ep.audio_url and not ep.spotify_url %}
+            <div class="audio-player-wrapper">
+              <audio controls class="native-audio-player">
+                <source src="{{ ep.audio_url }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          {% endif %}
+
+          <!-- Both available — show both -->
+          {% if ep.audio_url and ep.spotify_url %}
+            <div class="audio-player-wrapper">
+              <p class="also-listen">Or listen directly:</p>
+              <audio controls class="native-audio-player">
+                <source src="{{ ep.audio_url }}" type="audio/mpeg">
+              </audio>
+            </div>
+          {% endif %}
+
+        </div>
+        {% endfor %}
+
+      {% else %}
+        <!-- Fallback: hardcoded first episode -->
+        <div class="episode-card reveal">
+          <div class="episode-header">
+            <span class="card-tag">Episode 1</span>
+            <span class="episode-date"><i class="fas fa-calendar"></i> 2025</span>
+          </div>
+          <h3>Healing After Heartbreak</h3>
+          <p>Ezinne shares practical and faith-based steps to heal, rebuild your confidence, and find peace after emotional pain.</p>
+          <iframe style="border-radius:12px"
+            src="https://open.spotify.com/embed/episode/7makk4oTQel546B0PZlDM5"
+            width="100%" height="152" frameBorder="0"
+            allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+          </iframe>
+        </div>
+      {% endif %}
 
     </div>
   </section>
