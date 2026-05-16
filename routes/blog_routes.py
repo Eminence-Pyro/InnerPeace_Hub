@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import current_user
-from models import Post, Message, db
+from models import Post, Message, Subscriber, db
 from utils import generate_slug
 
 blog_bp = Blueprint('blog', __name__)
@@ -88,3 +88,28 @@ def contact():
         return redirect(url_for('blog.contact'))
 
     return render_template('contact.html')
+
+@blog_bp.route('/subscribe', methods=['POST'])
+def subscribe():
+    email = request.form.get('email', '').strip()
+    name = request.form.get('name', '').strip()
+
+    if not email or '@' not in email:
+        flash('Please enter a valid email address.')
+        return redirect(request.referrer or url_for('blog.index'))
+
+    existing = Subscriber.query.filter_by(email=email).first()
+    if existing:
+        if not existing.is_active:
+            existing.is_active = True
+            db.session.commit()
+            flash("Welcome back! You've been re-subscribed.")
+        else:
+            flash("You're already subscribed — thank you!")
+        return redirect(request.referrer or url_for('blog.index'))
+
+    subscriber = Subscriber(email=email, name=name)
+    db.session.add(subscriber)
+    db.session.commit()
+    flash("You're subscribed! Welcome to the InnerPeace Hub community 🎉")
+    return redirect(request.referrer or url_for('blog.index'))
