@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Podcast Episodes — Admin{% endblock %}
+{% block content %}
+<section class="admin-dashboard">
+  <div class="container">
+
+    <div class="dashboard-header">
+      <div>
+        <h1>Podcast Episodes</h1>
+        <p>{{ episodes|length }} episode{{ 's' if episodes|length != 1 else '' }}</p>
+      </div>
+      <div class="dashboard-actions">
+        <a href="{{ url_for('admin.create_episode') }}" class="btn-primary">
+          <i class="fas fa-plus"></i> New Episode
+        </a>
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn-secondary">
+          <i class="fas fa-arrow-left"></i> Dashboard
+        </a>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="flash-message">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% if episodes %}
+    <div class="table-wrapper">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Ep #</th>
+            <th>Title</th>
+            <th>Duration</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ep in episodes %}
+          <tr>
+            <td>{{ ep.episode_number or '—' }}</td>
+            <td>{{ ep.title }}</td>
+            <td>{{ ep.duration or '—' }}</td>
+            <td>
+              <span class="status-badge status-{{ ep.status }}">{{ ep.status }}</span>
+            </td>
+            <td>{{ ep.date_published.strftime('%b %d, %Y') }}</td>
+            <td class="table-actions">
+              <a href="{{ url_for('admin.edit_episode', episode_id=ep.id) }}" class="btn-edit" title="Edit">
+                <i class="fas fa-edit"></i>
+              </a>
+              <form method="POST" action="{{ url_for('admin.delete_episode', episode_id=ep.id) }}"
+                    onsubmit="return confirm('Delete this episode?')" style="display:inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-delete" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-microphone-slash"></i>
+      <p>No episodes yet. Add your first one!</p>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}
