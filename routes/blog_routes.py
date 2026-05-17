@@ -70,7 +70,13 @@ def post(slug):
         Post.id != post.id,
         Post.status == 'published'
     ).limit(2).all()
-    return render_template('post.html', post=post, related=related)
+
+    # Only show approved comments publicly
+    approved_comments = Comment.query.filter_by(
+        post_id=post.id, approved=True
+    ).order_by(Comment.date_posted.asc()).all()
+
+    return render_template('post.html', post=post, related=related, comments=approved_comments)
 
 
 @blog_bp.route('/about')
@@ -146,9 +152,9 @@ def add_comment(slug):
         flash('All comment fields are required.')
         return redirect(url_for('blog.post', slug=slug) + '#comments')
 
-    comment = Comment(post_id=post.id, name=name, email=email, body=body)
+    comment = Comment(post_id=post.id, name=name, email=email, body=body, approved=False)
     db.session.add(comment)
     db.session.commit()
-    flash('Your comment has been posted!')
+    flash('Thanks! Your comment is awaiting moderation and will appear shortly. 🙏')
     return redirect(url_for('blog.post', slug=slug) + '#comments')
 
