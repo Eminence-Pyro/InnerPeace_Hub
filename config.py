@@ -16,10 +16,12 @@ class Config:
     SQLALCHEMY_DATABASE_URI = database_url or 'sqlite:///innerpeacehub.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # Connection pool (postgres only — skipped for SQLite automatically by SQLAlchemy)
+    # Connection pool settings — pool_pre_ping auto-reconnects dropped SSL connections
     SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_pre_ping": True,
-        "pool_recycle": 300,
+        "pool_pre_ping": True,      # test connection before use, reconnects if dead
+        "pool_recycle": 180,        # recycle connections every 3 min (before SSL timeout)
+        "pool_timeout": 20,
+        "pool_size": 5,
     }
 
     # CKEditor
