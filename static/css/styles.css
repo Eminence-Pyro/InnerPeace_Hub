@@ -72,40 +72,9 @@ p {
   transition: width 0.1s ease-out;
 }
 
-/* Scroll to Top Button */
-#scrollTopBtn {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  width: 46px;
-  height: 46px;
-  background: linear-gradient(135deg, #6B2D8B, #D4A843);
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 18px;
-  z-index: 1500;
-  box-shadow: 0 4px 15px rgba(107, 45, 139, 0.3);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  opacity: 0;
-  pointer-events: none;
-}
-#scrollTopBtn.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
 
+/* Scroll to Top — now handled by .fab-cluster below */
 
-#scrollTopBtn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(107, 45, 139, 0.4);
-}
 
 /* Flash Messages */
 .flash-messages {
@@ -2835,79 +2804,6 @@ input[type="url"], input[type="number"], textarea, select {
 
 
 /* ===========================
-   Admin — Mobile Responsive
-   =========================== */
-@media (max-width: 768px) {
-  .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-  }
-
-  .dashboard-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .dashboard-actions a,
-  .dashboard-actions button {
-    flex: 1 1 auto;
-    min-width: 120px;
-    text-align: center;
-    justify-content: center;
-    font-size: 0.82rem;
-    padding: 8px 10px;
-  }
-
-  .dashboard-stats {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .table-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .admin-table {
-    min-width: 540px;
-  }
-
-  .admin-table th,
-  .admin-table td {
-    padding: 10px 8px;
-    font-size: 0.82rem;
-  }
-
-  .post-title-cell {
-    max-width: 140px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .create-form {
-    padding: 20px 16px;
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .dashboard-stats {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-/* ===========================
    Dark Mode — Global Overrides
    (ensures all hardcoded colours switch)
    =========================== */
@@ -2972,17 +2868,58 @@ input[type="url"], input[type="number"], textarea, select {
 
 
 /* ===========================
-   FAB Cluster (Scroll-to-top + Dark Mode)
-   Fixed bottom-right corner
+   Audio Upload Area
+   =========================== */
+.audio-upload-area {
+  position: relative;
+  border: 2px dashed var(--border, #e8e0f0);
+  border-radius: 12px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  background: var(--input-bg, #fff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.audio-upload-area:hover,
+.audio-upload-area.drag-over {
+  border-color: #6B2D8B;
+  background: #f9f0ff;
+}
+
+.upload-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--border, #e8e0f0);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.upload-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6B2D8B, #D4A843);
+  border-radius: 99px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+
+/* ===========================
+   FAB Cluster — Dark Mode + Scroll-to-top
    =========================== */
 .fab-cluster {
   position: fixed;
-  bottom: 28px;
-  right: 24px;
+  bottom: 24px;
+  right: 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
-  z-index: 1500;
+  z-index: 9999;
 }
 
 .fab-btn {
@@ -2995,30 +2932,27 @@ input[type="url"], input[type="number"], textarea, select {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(107, 45, 139, 0.28);
-  transition: transform 0.2s ease, opacity 0.3s ease, background 0.3s ease;
   background: linear-gradient(135deg, #6B2D8B, #D4A843);
   color: #fff;
+  box-shadow: 0 4px 16px rgba(107, 45, 139, 0.35);
+  transition: transform 0.2s ease, opacity 0.3s ease;
+  /* No position:fixed on individual buttons — the cluster is fixed */
 }
 
 .fab-btn:hover {
   transform: scale(1.1);
 }
 
-/* Dark mode toggle is always visible */
+/* Dark mode toggle — always visible */
 #darkModeToggle {
-  opacity: 1;
-  pointer-events: auto;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
-/* Scroll-to-top starts hidden, shown by JS */
+/* Scroll-to-top — hidden until user scrolls */
 #scrollTopBtn {
   opacity: 0;
   pointer-events: none;
-  /* Override any old fixed positioning from previous CSS */
-  position: static !important;
-  bottom: auto !important;
-  right: auto !important;
 }
 
 #scrollTopBtn.visible {
@@ -3027,14 +2961,111 @@ input[type="url"], input[type="number"], textarea, select {
 }
 
 @media (max-width: 480px) {
-  .fab-cluster {
-    bottom: 20px;
-    right: 16px;
+  .fab-cluster { bottom: 16px; right: 14px; }
+  .fab-btn { width: 42px; height: 42px; font-size: 15px; }
+}
+
+
+/* ===========================
+   Admin Dashboard — Mobile
+   =========================== */
+@media (max-width: 900px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
-  .fab-btn {
-    width: 42px;
-    height: 42px;
-    font-size: 15px;
+
+  .dashboard-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .dashboard-actions a,
+  .dashboard-actions button {
+    flex: 1 1 auto;
+    min-width: 100px;
+    font-size: 0.82rem;
+    padding: 8px 10px;
+    text-align: center;
+    justify-content: center;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Wrap the table so it scrolls horizontally instead of overflowing */
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    border: 1px solid var(--border, #e8e0f0);
+  }
+
+  /* Give the table a minimum width so columns don't crush together */
+  .admin-table {
+    min-width: 580px;
+    width: 100%;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 10px 10px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  /* Keep the title column readable but bounded */
+  .post-title-cell {
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  /* Action buttons stay on one row */
+  .table-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .btn-view, .btn-edit, .btn-delete {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-stats {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -3055,6 +3086,7 @@ input[type="url"], input[type="number"], textarea, select {
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  overflow: hidden;
 }
 
 .audio-upload-area:hover,
