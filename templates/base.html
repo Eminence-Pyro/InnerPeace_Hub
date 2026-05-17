@@ -11,29 +11,37 @@
   <meta property="og:url" content="{{ request.url }}">
   <meta name="theme-color" content="#6B2D8B">
   <meta name="color-scheme" content="light dark">
-  
-  <!-- Favicon - Multiple formats for cross-platform compatibility -->
+
+  <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
   <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
   <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
   <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
   <link rel="manifest" type="application/manifest+json" href="{{ url_for('static', filename='images/site.webmanifest') }}">
-    
+
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-  
+
   <!-- Stylesheet -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
-  
+
+  <!-- Dark mode applied BEFORE render to prevent flash -->
+  <script>
+    (function() {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
+
   {% block extra_head %}{% endblock %}
 </head>
 <body>
 
   <div id="progress-bar"></div>
-
   <div class="nav-overlay" id="nav-overlay"></div>
 
   <!-- Navbar -->
@@ -57,12 +65,6 @@
           <li><a href="{{ url_for('blog.about') }}">About</a></li>
           <li><a href="{{ url_for('blog.contact') }}">Contact</a></li>
         </ul>
-
-        <!-- Dark Mode Toggle -->
-        <button class="dark-mode-toggle" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
-          <i class="fas fa-moon" id="darkModeIcon"></i>
-        </button>
-
       </nav>
     </div>
   </header>
@@ -92,14 +94,14 @@
         </h3>
         <p>A platform for healing, growth, and faith-centered living.</p>
         <div class="social-icons">
-        <a href="https://www.facebook.com/share/1CtiTA5aKH/" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://www.instagram.com/innerpeace_hub?utm_source=qr&igsh=OGtpMGs0emZnOWtj" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://www.tiktok.com/@mhizzinnyu" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-        <a href="https://www.linkedin.com/in/divine-nnata-0203b7225?utm_source=share_via&utm_content=profile&utm_medium=member_android" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-        <a href="https://t.me/+2348136085634" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
-        <a href="https://wa.me/+2348136085634" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
-        <a href="https://x.com/MhizZinnyU" aria-label="Instagram"><i class="fab fa-x-twitter"></i></a>
-      </div>
+          <a href="https://www.facebook.com/share/1CtiTA5aKH/" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/innerpeace_hub?utm_source=qr&igsh=OGtpMGs0emZnOWtj" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.tiktok.com/@mhizzinnyu" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+          <a href="https://www.linkedin.com/in/divine-nnata-0203b7225?utm_source=share_via&utm_content=profile&utm_medium=member_android" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+          <a href="https://t.me/+2348136085634" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+          <a href="https://wa.me/+2348136085634" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://x.com/MhizZinnyU" aria-label="X / Twitter"><i class="fab fa-x-twitter"></i></a>
+        </div>
       </div>
 
       <div class="footer-links">
@@ -117,44 +119,48 @@
         <p><a href="tel:+2348136085634" aria-label="Phone"><i class="fas fa-phone"></i> +234 813 608 5634</a></p>
       </div>
     </div>
-
     <div class="footer-bottom">
       <p>&copy; 2026 InnerPeace Hub. All rights reserved.</p>
     </div>
   </footer>
 
-  <!-- JavaScript -->
+  <!-- Floating Action Buttons (scroll-to-top + dark mode) -->
+  <!-- These MUST be in DOM before script.js runs -->
+  <div class="fab-cluster">
+    <button class="fab-btn" id="darkModeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <i class="fas fa-moon" id="darkModeIcon"></i>
+    </button>
+    <button class="fab-btn" id="scrollTopBtn" aria-label="Scroll to top" title="Back to top">
+      <i class="fas fa-arrow-up"></i>
+    </button>
+  </div>
+
+  <!-- JavaScript — loaded AFTER DOM elements above exist -->
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   {% block extra_scripts %}{% endblock %}
 
-  <button id="scrollTopBtn" aria-label="Scroll to Top">
-    <i class="fas fa-arrow-up"></i>
-  </button>
-
-  <!-- Dark Mode Script -->
+  <!-- Dark mode toggle logic (separate from early flash-prevention snippet above) -->
   <script>
     (function() {
       const toggle = document.getElementById('darkModeToggle');
       const icon   = document.getElementById('darkModeIcon');
-      const saved  = localStorage.getItem('theme');
 
-      // Apply saved preference immediately (before paint)
-      if (saved === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        if (icon) { icon.classList.replace('fa-moon', 'fa-sun'); }
+      // Sync icon with current state
+      if (document.documentElement.getAttribute('data-theme') === 'dark') {
+        if (icon) icon.className = 'fas fa-sun';
       }
 
       if (toggle) {
-        toggle.addEventListener('click', () => {
+        toggle.addEventListener('click', function() {
           const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
           if (isDark) {
             document.documentElement.removeAttribute('data-theme');
             localStorage.setItem('theme', 'light');
-            icon.classList.replace('fa-sun', 'fa-moon');
+            if (icon) icon.className = 'fas fa-moon';
           } else {
             document.documentElement.setAttribute('data-theme', 'dark');
             localStorage.setItem('theme', 'dark');
-            icon.classList.replace('fa-moon', 'fa-sun');
+            if (icon) icon.className = 'fas fa-sun';
           }
         });
       }
