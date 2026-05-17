@@ -41,7 +41,7 @@ class Config:
     CKEDITOR_EXTRA_ALLOWED_CONTENT = 'div(*); span(*); a[*]{*}(*); img[*]{*}(*)'
 
     # File upload
-    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif', 'avif', 'heic'}
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB — Cloudinary handles actual size limits
 
     # Cloudinary
