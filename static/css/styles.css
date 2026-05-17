@@ -3110,3 +3110,29 @@ input[type="url"], input[type="number"], textarea, select {
   transition: width 0.3s ease;
   width: 0%;
 }
+
+
+/* ── Dashboard table scroll fix ───────────────────────────────────────────────
+   Forces the posts table to scroll horizontally even inside a grid column.
+   Unlike .table-wrapper (which may be constrained by grid), this wrapper
+   explicitly breaks out with min-width:0 on the parent grid item.           */
+.dashboard-grid .dashboard-section {
+  min-width: 0;       /* prevents grid children from overflowing grid tracks */
+  overflow: hidden;   /* clip anything that still tries to burst out         */
+}
+
+.dashboard-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.dashboard-table-scroll .table-wrapper {
+  overflow: visible;  /* outer scroll handles it; inner wrapper just provides border/radius */
+  min-width: 0;
+}
+
+.dashboard-table-scroll .admin-table {
+  min-width: 520px;   /* enough for Title | Category | Status | Date | Actions */
+  width: 100%;
+}
