@@ -8,7 +8,14 @@ blog_bp = Blueprint('blog', __name__)
 
 @blog_bp.route('/')
 def index():
-    posts = Post.query.filter_by(status='published').order_by(Post.date_posted.desc()).limit(3).all()
+    from datetime import datetime, timezone as tz
+    now = datetime.now(tz.utc)
+    posts = Post.query.filter(
+        db.or_(
+            Post.status == 'published',
+            db.and_(Post.status == 'scheduled', Post.scheduled_for <= now)
+        )
+    ).order_by(Post.date_posted.desc()).limit(3).all()
     return render_template('index.html', posts=posts)
 
 
@@ -18,7 +25,14 @@ def blog():
     category = request.args.get('category', None)
     search = request.args.get('search', None)
     
-    query = Post.query.filter_by(status='published')
+    from datetime import datetime, timezone as tz
+    now = datetime.now(tz.utc)
+    query = Post.query.filter(
+        db.or_(
+            Post.status == 'published',
+            db.and_(Post.status == 'scheduled', Post.scheduled_for <= now)
+        )
+    )
     
     if category:
         query = query.filter_by(category=category)
@@ -39,11 +53,17 @@ def blog():
 @blog_bp.route('/post/<slug>')
 def post(slug):
     if current_user.is_authenticated:
-        # Admins can preview any post including drafts
         post = Post.query.filter_by(slug=slug).first_or_404()
     else:
-        # Public only sees published posts
         post = Post.query.filter_by(slug=slug, status='published').first_or_404()
+
+    # ── View counter — increment on each visit, skip admin previews ────────────
+    if not current_user.is_authenticated:
+        try:
+            post.view_count = (post.view_count or 0) + 1
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
 
     related = Post.query.filter(
         Post.category == post.category,
