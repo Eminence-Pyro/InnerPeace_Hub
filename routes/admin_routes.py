@@ -56,9 +56,13 @@ def create_post():
 
         image_filename = None
 
-        if image_file and allowed_file(image_file.filename):
-            upload_result = cloudinary.uploader.upload(image_file)
-            image_filename = upload_result['secure_url']
+        if image_file and image_file.filename and allowed_file(image_file.filename):
+            try:
+                upload_result = cloudinary.uploader.upload(image_file)
+                image_filename = upload_result['secure_url']
+            except Exception as e:
+                flash(f'Image upload failed: {str(e)}. Try a smaller image.')
+                return redirect(url_for('admin.create_post'))
 
         new_post = Post(
             title=title,
@@ -120,21 +124,37 @@ def edit_post(post_id):
     post = Post.query.get_or_404(post_id)
 
     if request.method == 'POST':
-        post.title = request.form.get('title')
-        post.slug = generate_slug(post.title)
+        new_title = request.form.get('title', '').strip()
+        if not new_title:
+            flash('Title is required.')
+            return redirect(url_for('admin.edit_post', post_id=post.id))
+
+        # Only regenerate slug if title actually changed
+        if new_title != post.title:
+            new_slug = generate_slug(new_title)
+            # Ensure slug uniqueness (skip self)
+            existing = Post.query.filter(Post.slug == new_slug, Post.id != post.id).first()
+            if existing:
+                new_slug = f"{new_slug}-{uuid.uuid4().hex[:6]}"
+            post.slug = new_slug
+
+        post.title    = new_title
         post.category = request.form.get('category')
-        post.excerpt = request.form.get('excerpt')
-        post.content = request.form.get('content')
+        post.excerpt  = request.form.get('excerpt')
+        post.content  = request.form.get('content')
         post.read_time = request.form.get('read_time')
-        post.status = request.form.get('status', 'draft')
+        post.status   = request.form.get('status', 'draft')
         post.is_featured = request.form.get('is_featured') == 'on'
-        post.tags = request.form.get('tags', '')
+        post.tags     = request.form.get('tags', '')
 
         image_file = request.files.get('image')
-
-        if image_file and allowed_file(image_file.filename):
-            upload_result = cloudinary.uploader.upload(image_file)
-            post.image = upload_result['secure_url']
+        if image_file and image_file.filename and allowed_file(image_file.filename):
+            try:
+                upload_result = cloudinary.uploader.upload(image_file)
+                post.image = upload_result['secure_url']
+            except Exception as e:
+                flash(f'Image upload failed: {str(e)}')
+                return redirect(url_for('admin.edit_post', post_id=post.id))
 
         db.session.commit()
         flash(f"Post updated and saved as {post.status}")
