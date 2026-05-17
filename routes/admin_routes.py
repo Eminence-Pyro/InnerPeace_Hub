@@ -378,3 +378,115 @@ def delete_comment(comment_id):
     db.session.commit()
     flash('Comment deleted.')
     return redirect(url_for('admin.comment_moderation'))
+
+
+# ─── Newsletter ────────────────────────────────────────────────────────────────
+
+@admin_bp.route('/admin/subscribers/toggle/<int:sub_id>', methods=['POST'])
+@login_required
+def toggle_subscriber(sub_id):
+    from models import Subscriber
+    sub = Subscriber.query.get_or_404(sub_id)
+    sub.is_active = not sub.is_active
+    db.session.commit()
+    flash(f"{'Reactivated' if sub.is_active else 'Deactivated'} {sub.email}")
+    return redirect(url_for('admin.subscribers'))
+
+
+@admin_bp.route('/admin/subscribers/send-digest')
+@login_required
+def send_digest():
+    """Send latest 3 published posts to all active subscribers via email."""
+    import smtplib, os
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from models import Subscriber, Post
+
+    subscribers = Subscriber.query.filter_by(is_active=True).all()
+    if not subscribers:
+        flash('No active subscribers to send to.')
+        return redirect(url_for('admin.subscribers'))
+
+    posts = Post.query.filter_by(status='published').order_by(Post.date_posted.desc()).limit(3).all()
+    if not posts:
+        flash('No published posts to include in the digest.')
+        return redirect(url_for('admin.subscribers'))
+
+    # Build email HTML
+    site_url = os.environ.get('SITE_URL', 'https://innerpeacehub.onrender.com')
+    post_blocks = ''
+    for p in posts:
+        post_blocks += f"""
+        <div style="margin-bottom:28px; border-bottom:1px solid #e8e0f0; padding-bottom:24px;">
+          <h3 style="font-family:Georgia,serif; color:#6B2D8B; margin:0 0 8px;">
+            <a href="{site_url}/post/{p.slug}" style="color:#6B2D8B; text-decoration:none;">{p.title}</a>
+          </h3>
+          <p style="color:#888; font-size:13px; margin:0 0 10px;">{p.category} · {p.read_time or '5 min read'}</p>
+          <p style="color:#444; line-height:1.7; margin:0 0 12px;">{p.excerpt}</p>
+          <a href="{site_url}/post/{p.slug}"
+             style="background:#6B2D8B; color:#fff; padding:8px 18px; border-radius:6px;
+                    text-decoration:none; font-size:14px;">Read More →</a>
+        </div>"""
+
+    html_body = f"""
+    <div style="font-family:Lato,Arial,sans-serif; max-width:600px; margin:0 auto; color:#2C2C2C;">
+      <div style="background:linear-gradient(135deg,#6B2D8B,#D4A843); padding:32px; text-align:center; border-radius:12px 12px 0 0;">
+        <h1 style="color:#fff; margin:0; font-family:Georgia,serif;">InnerPeace Hub</h1>
+        <p style="color:rgba(255,255,255,0.85); margin:8px 0 0;">Your weekly digest of peace, healing & faith</p>
+      </div>
+      <div style="background:#fff; padding:32px; border:1px solid #e8e0f0; border-top:none;">
+        <h2 style="font-family:Georgia,serif; color:#2C2C2C; margin-top:0;">Latest from the Blog</h2>
+        {post_blocks}
+        <div style="text-align:center; margin-top:32px;">
+          <a href="{site_url}/blog"
+             style="background:#D4A843; color:#fff; padding:12px 28px; border-radius:8px;
+                    text-decoration:none; font-weight:bold;">Visit the Blog</a>
+        </div>
+      </div>
+      <div style="background:#f9f5ff; padding:16px 32px; text-align:center; border-radius:0 0 12px 12px;
+                  font-size:12px; color:#999;">
+        You're receiving this because you subscribed at InnerPeace Hub.<br>
+        <a href="{site_url}/unsubscribe?email={{email}}" style="color:#999;">Unsubscribe</a>
+      </div>
+    </div>"""
+
+    # SMTP config from env
+    smtp_host   = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
+    smtp_port   = int(os.environ.get('SMTP_PORT', 587))
+    smtp_user   = os.environ.get('SMTP_USER', '')
+    smtp_pass   = os.environ.get('SMTP_PASS', '')
+    from_name   = 'InnerPeace Hub'
+    from_email  = smtp_user
+
+    if not smtp_user or not smtp_pass:
+        flash('Email not configured. Set SMTP_USER and SMTP_PASS in your .env file.')
+        return redirect(url_for('admin.subscribers'))
+
+    sent, failed = 0, 0
+    try:
+        server = smtplib.SMTP(smtp_host, smtp_port)
+        server.ehlo()
+        server.starttls()
+        server.login(smtp_user, smtp_pass)
+
+        for sub in subscribers:
+            try:
+                msg = MIMEMultipart('alternative')
+                msg['Subject'] = f"✨ Latest from InnerPeace Hub — {posts[0].title[:40]}"
+                msg['From']    = f"{from_name} <{from_email}>"
+                msg['To']      = sub.email
+                personal_html  = html_body.replace('{email}', sub.email)
+                msg.attach(MIMEText(personal_html, 'html'))
+                server.sendmail(from_email, sub.email, msg.as_string())
+                sent += 1
+            except Exception:
+                failed += 1
+
+        server.quit()
+    except Exception as e:
+        flash(f'SMTP connection failed: {str(e)}')
+        return redirect(url_for('admin.subscribers'))
+
+    flash(f'Digest sent to {sent} subscriber{"s" if sent != 1 else ""}.' +
+          (f' {failed} failed.' if failed else ''))
+    return redirect(url_for('admin.subscribers'))
