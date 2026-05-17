@@ -223,14 +223,21 @@ def create_episode():
             flash('Episode title is required.')
             return redirect(url_for('admin.create_episode'))
 
-        audio_url = None
-        if audio_file and audio_file.filename:
-            result = cloudinary.uploader.upload(
-                audio_file,
-                resource_type='video',   # Cloudinary uses 'video' for audio files
-                folder='innerpeacehub/podcasts'
-            )
-            audio_url = result['secure_url']
+        # Check for direct browser upload URL first (bypasses Flask size limit)
+        audio_url = request.form.get('audio_url_direct', '').strip() or None
+
+        # Fall back to server-side upload if a file was submitted the traditional way
+        if audio_file and audio_file.filename and not audio_url:
+            try:
+                result = cloudinary.uploader.upload(
+                    audio_file,
+                    resource_type='video',
+                    folder='innerpeacehub/podcasts'
+                )
+                audio_url = result['secure_url']
+            except Exception as e:
+                flash(f'Audio upload failed: {str(e)}')
+                return redirect(url_for('admin.create_episode'))
 
         cover_url = None
         if cover_file and allowed_file(cover_file.filename):
@@ -269,14 +276,24 @@ def edit_episode(episode_id):
         episode.duration = request.form.get('duration', '').strip() or None
         episode.status = request.form.get('status', 'published')
 
+        # Check for direct browser upload URL
+        direct_audio_url = request.form.get('audio_url_direct', '').strip()
+        if direct_audio_url:
+            episode.audio_url = direct_audio_url
+
+        # Fall back to server-side upload
         audio_file = request.files.get('audio_file')
-        if audio_file and audio_file.filename:
-            result = cloudinary.uploader.upload(
-                audio_file,
-                resource_type='video',
-                folder='innerpeacehub/podcasts'
-            )
-            episode.audio_url = result['secure_url']
+        if audio_file and audio_file.filename and not direct_audio_url:
+            try:
+                result = cloudinary.uploader.upload(
+                    audio_file,
+                    resource_type='video',
+                    folder='innerpeacehub/podcasts'
+                )
+                episode.audio_url = result['secure_url']
+            except Exception as e:
+                flash(f'Audio upload failed: {str(e)}')
+                return redirect(url_for('admin.edit_episode', episode_id=episode.id))
 
         cover_file = request.files.get('cover_image')
         if cover_file and allowed_file(cover_file.filename):
