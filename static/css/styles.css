@@ -2919,3 +2919,67 @@ input[type="url"], input[type="number"], textarea, select {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ===========================
+   Dark Mode — Global Overrides
+   (ensures all hardcoded colours switch)
+   =========================== */
+[data-theme="dark"] .footer,
+[data-theme="dark"] .footer-content { background: #0f0f1e !important; }
+
+[data-theme="dark"] .hero,
+[data-theme="dark"] .featured,
+[data-theme="dark"] .blog-preview,
+[data-theme="dark"] .publications,
+[data-theme="dark"] .related-section,
+[data-theme="dark"] .episodes,
+[data-theme="dark"] .podcast-intro,
+[data-theme="dark"] section { background: var(--bg) !important; }
+
+[data-theme="dark"] .page-header { background: linear-gradient(135deg, #1a1a2e, #2d1b4e) !important; }
+
+[data-theme="dark"] .featured-card,
+[data-theme="dark"] .pub-card,
+[data-theme="dark"] .blog-card,
+[data-theme="dark"] .episode-card,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .reactions,
+[data-theme="dark"] .dashboard-section { background: var(--card-bg) !important; }
+
+[data-theme="dark"] .card-body h3,
+[data-theme="dark"] .post-title,
+[data-theme="dark"] h1, [data-theme="dark"] h2,
+[data-theme="dark"] h3, [data-theme="dark"] h4 { color: var(--text) !important; }
+
+[data-theme="dark"] .card-body p,
+[data-theme="dark"] .post-meta,
+[data-theme="dark"] .section-subtitle { color: var(--text-muted) !important; }
+
+[data-theme="dark"] .nav-links a { color: var(--text) !important; }
+[data-theme="dark"] .nav-links a:hover { color: #D4A843 !important; }
+
+[data-theme="dark"] .newsletter-section {
+  background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 100%) !important;
+}
+
+[data-theme="dark"] .newsletter-card p { color: var(--text-muted) !important; }
+
+[data-theme="dark"] .admin-dashboard,
+[data-theme="dark"] .admin-create { background: var(--bg) !important; }
+
+[data-theme="dark"] .admin-table thead tr { background: #2d1b4e !important; }
+[data-theme="dark"] .admin-table tbody tr:hover { background: #1e1e3e !important; }
+[data-theme="dark"] .admin-table td { color: var(--text) !important; border-color: var(--border) !important; }
+
+[data-theme="dark"] input, [data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background: var(--input-bg) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .flash-message {
+  background: #2d1b4e !important;
+  color: var(--text) !important;
+}
