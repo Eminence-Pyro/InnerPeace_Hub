@@ -3136,3 +3136,84 @@ input[type="url"], input[type="number"], textarea, select {
   min-width: 520px;   /* enough for Title | Category | Status | Date | Actions */
   width: 100%;
 }
+
+
+/* ── Stat card alert (pending comments) ────────────────────────────────────── */
+.stat-card-alert {
+  border: 2px solid #D4A843 !important;
+  background: #fffbf0 !important;
+}
+
+[data-theme="dark"] .stat-card-alert {
+  background: #2a2200 !important;
+}
+
+.stat-card-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #6B2D8B;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.stat-card-link:hover { text-decoration: underline; }
+
+/* ── View count badge in table ──────────────────────────────────────────────── */
+.view-count {
+  font-size: 0.82rem;
+  color: #888;
+  white-space: nowrap;
+}
+
+/* ── Comment moderation cards ───────────────────────────────────────────────── */
+.comment-mod-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #e8e0f0);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+
+.comment-mod-card.pending {
+  border-left: 4px solid #D4A843;
+}
+
+.comment-mod-card.approved {
+  border-left: 4px solid #6B2D8B;
+  opacity: 0.85;
+}
+
+.comment-mod-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+}
+
+.comment-mod-meta strong { color: var(--text); }
+.comment-mod-meta span { color: var(--text-muted, #888); }
+.comment-mod-meta .muted { font-size: 0.78rem; }
+.comment-mod-meta a { color: #6B2D8B; text-decoration: none; }
+.comment-mod-meta a:hover { text-decoration: underline; }
+
+.comment-mod-body {
+  color: var(--text, #2C2C2C);
+  line-height: 1.6;
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+}
+
+.comment-mod-actions { display: flex; gap: 8px; }
+
+/* ── Scheduled status badge ─────────────────────────────────────────────────── */
+.status-scheduled {
+  background: #e8f4fd;
+  color: #1a6fb3;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
