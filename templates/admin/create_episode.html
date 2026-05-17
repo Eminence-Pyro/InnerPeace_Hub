@@ -1,5 +1,85 @@
 {% extends 'base.html' %}
 {% block title %}{{ 'Edit' if episode else 'New' }} Episode — Admin{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+  // Cloudinary direct browser upload for large audio files
+  // Set your upload preset name in Cloudinary dashboard (Settings > Upload > Add upload preset, set to Unsigned)
+  const CLOUD_NAME = '{{ config["CLOUDINARY_CLOUD_NAME"] if config else "" }}';
+  const UPLOAD_PRESET = 'innerpeacehub_audio';  // create this in Cloudinary dashboard
+
+  const fileInput  = document.getElementById('audio_file_input');
+  const urlField   = document.getElementById('audio_url_field');
+  const statusBox  = document.getElementById('audio-upload-status');
+  const progressFill = document.getElementById('audioProgressFill');
+  const statusText = document.getElementById('audioStatusText');
+  const preview    = document.getElementById('audioPreview');
+  const uploadArea = document.getElementById('audioUploadArea');
+
+  if (!fileInput) return;
+
+  fileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+
+    statusBox.style.display = 'block';
+    statusText.textContent = 'Uploading... 0%';
+    progressFill.style.width = '0%';
+    preview.style.display = 'none';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('resource_type', 'video');  // Cloudinary uses 'video' for audio too
+    formData.append('folder', 'innerpeacehub/podcasts');
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`);
+
+    xhr.upload.addEventListener('progress', function(e) {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        progressFill.style.width = pct + '%';
+        statusText.textContent = 'Uploading... ' + pct + '%';
+      }
+    });
+
+    xhr.addEventListener('load', function() {
+      if (xhr.status === 200) {
+        const result = JSON.parse(xhr.responseText);
+        urlField.value = result.secure_url;
+        progressFill.style.width = '100%';
+        statusText.textContent = '✅ Upload complete! ' + file.name;
+        preview.src = result.secure_url;
+        preview.style.display = 'block';
+      } else {
+        statusText.textContent = '❌ Upload failed. Try again.';
+        progressFill.style.width = '0%';
+      }
+    });
+
+    xhr.addEventListener('error', function() {
+      statusText.textContent = '❌ Network error during upload.';
+    });
+
+    xhr.send(formData);
+  });
+
+  // Drag and drop
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) {
+      fileInput.files = e.dataTransfer.files;
+      fileInput.dispatchEvent(new Event('change'));
+    }
+  });
+})();
+</script>
+{% endblock %}
 {% block content %}
 <section class="admin-dashboard">
   <div class="container" style="max-width: 720px;">
@@ -39,18 +119,33 @@
       </div>
 
       <div class="form-group">
-        <label for="audio_file">
-          Audio File (MP3/WAV)
-          {% if episode and episode.audio_url %}
-            <span style="color:#6B2D8B; font-size:0.85rem;">— file already uploaded, upload new to replace</span>
-          {% endif %}
-        </label>
+        <label>Audio File (MP3/WAV/M4A)</label>
         {% if episode and episode.audio_url %}
-          <audio controls style="width:100%; margin-bottom:10px;">
+          <audio controls style="width:100%; margin-bottom:10px; border-radius:8px;">
             <source src="{{ episode.audio_url }}">
           </audio>
+          <p style="font-size:0.83rem; color:#6B2D8B; margin-bottom:8px;">File already uploaded — choose a new one below to replace it.</p>
         {% endif %}
-        <input type="file" id="audio_file" name="audio_file" accept="audio/*" />
+
+        <!-- Hidden field that holds the Cloudinary URL after upload -->
+        <input type="hidden" id="audio_url_field" name="audio_url_direct"
+               value="{{ episode.audio_url if episode else '' }}">
+
+        <div class="audio-upload-area" id="audioUploadArea">
+          <i class="fas fa-microphone" style="font-size:2rem; color:#6B2D8B; margin-bottom:8px;"></i>
+          <p>Click to choose an audio file, or drag and drop</p>
+          <p style="font-size:0.82rem; color:#888;">MP3, WAV, M4A — up to 100MB</p>
+          <input type="file" id="audio_file_input" accept="audio/*"
+                 style="position:absolute; inset:0; opacity:0; cursor:pointer;" />
+        </div>
+
+        <div id="audio-upload-status" style="display:none; margin-top:12px;">
+          <div class="upload-progress-bar">
+            <div class="upload-progress-fill" id="audioProgressFill"></div>
+          </div>
+          <p id="audioStatusText" style="font-size:0.85rem; color:#6B2D8B; margin-top:6px;"></p>
+          <audio id="audioPreview" controls style="width:100%; margin-top:10px; border-radius:8px; display:none;"></audio>
+        </div>
       </div>
 
       <div class="form-group">
@@ -84,4 +179,84 @@
 
   </div>
 </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+(function() {
+  // Cloudinary direct browser upload for large audio files
+  // Set your upload preset name in Cloudinary dashboard (Settings > Upload > Add upload preset, set to Unsigned)
+  const CLOUD_NAME = '{{ config["CLOUDINARY_CLOUD_NAME"] if config else "" }}';
+  const UPLOAD_PRESET = 'innerpeacehub_audio';  // create this in Cloudinary dashboard
+
+  const fileInput  = document.getElementById('audio_file_input');
+  const urlField   = document.getElementById('audio_url_field');
+  const statusBox  = document.getElementById('audio-upload-status');
+  const progressFill = document.getElementById('audioProgressFill');
+  const statusText = document.getElementById('audioStatusText');
+  const preview    = document.getElementById('audioPreview');
+  const uploadArea = document.getElementById('audioUploadArea');
+
+  if (!fileInput) return;
+
+  fileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+
+    statusBox.style.display = 'block';
+    statusText.textContent = 'Uploading... 0%';
+    progressFill.style.width = '0%';
+    preview.style.display = 'none';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('resource_type', 'video');  // Cloudinary uses 'video' for audio too
+    formData.append('folder', 'innerpeacehub/podcasts');
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`);
+
+    xhr.upload.addEventListener('progress', function(e) {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        progressFill.style.width = pct + '%';
+        statusText.textContent = 'Uploading... ' + pct + '%';
+      }
+    });
+
+    xhr.addEventListener('load', function() {
+      if (xhr.status === 200) {
+        const result = JSON.parse(xhr.responseText);
+        urlField.value = result.secure_url;
+        progressFill.style.width = '100%';
+        statusText.textContent = '✅ Upload complete! ' + file.name;
+        preview.src = result.secure_url;
+        preview.style.display = 'block';
+      } else {
+        statusText.textContent = '❌ Upload failed. Try again.';
+        progressFill.style.width = '0%';
+      }
+    });
+
+    xhr.addEventListener('error', function() {
+      statusText.textContent = '❌ Network error during upload.';
+    });
+
+    xhr.send(formData);
+  });
+
+  // Drag and drop
+  uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.classList.add('drag-over'); });
+  uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+  uploadArea.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) {
+      fileInput.files = e.dataTransfer.files;
+      fileInput.dispatchEvent(new Event('change'));
+    }
+  });
+})();
+</script>
 {% endblock %}
