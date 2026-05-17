@@ -39,6 +39,7 @@ class Comment(db.Model):
     email = db.Column(db.String(100), nullable=False)
     body = db.Column(db.Text, nullable=False)
     date_posted = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    approved = db.Column(db.Boolean, default=False, nullable=False)  # requires admin approval
 
 
 class Message(db.Model):
