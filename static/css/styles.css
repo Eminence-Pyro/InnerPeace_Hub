@@ -2569,21 +2569,7 @@ input[type="url"], input[type="number"], textarea, select {
 .post-content { color: var(--text); }
 .comment-card { background: var(--card-bg); border-color: var(--border); }
 
-/* Dark mode toggle button */
-.dark-mode-toggle {
-  background: none;
-  border: 1.5px solid var(--border);
-  border-radius: 50px;
-  padding: 6px 12px;
-  cursor: pointer;
-  font-size: 1rem;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-}
-.dark-mode-toggle:hover { border-color: #6B2D8B; color: #6B2D8B; }
+/* dark-mode-toggle moved to fab-cluster */
 
 
 /* ===========================
@@ -2982,4 +2968,72 @@ input[type="url"], input[type="number"], textarea, select {
 [data-theme="dark"] .flash-message {
   background: #2d1b4e !important;
   color: var(--text) !important;
+}
+
+
+/* ===========================
+   FAB Cluster (Scroll-to-top + Dark Mode)
+   Fixed bottom-right corner
+   =========================== */
+.fab-cluster {
+  position: fixed;
+  bottom: 28px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1500;
+}
+
+.fab-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(107, 45, 139, 0.28);
+  transition: transform 0.2s ease, opacity 0.3s ease, background 0.3s ease;
+  background: linear-gradient(135deg, #6B2D8B, #D4A843);
+  color: #fff;
+}
+
+.fab-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Dark mode toggle is always visible */
+#darkModeToggle {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Scroll-to-top starts hidden, shown by JS */
+#scrollTopBtn {
+  opacity: 0;
+  pointer-events: none;
+  /* Override any old fixed positioning from previous CSS */
+  position: static !important;
+  bottom: auto !important;
+  right: auto !important;
+}
+
+#scrollTopBtn.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (max-width: 480px) {
+  .fab-cluster {
+    bottom: 20px;
+    right: 16px;
+  }
+  .fab-btn {
+    width: 42px;
+    height: 42px;
+    font-size: 15px;
+  }
 }
