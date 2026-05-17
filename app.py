@@ -83,6 +83,11 @@ def create_app(config_class=config):
 
     @app.errorhandler(500)
     def server_error(e):
+        # Roll back any broken DB transaction so the next request starts clean
+        try:
+            db.session.rollback()
+        except Exception:
+            pass
         return render_template('errors/500.html'), 500
 
     return app
