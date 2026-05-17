@@ -42,7 +42,7 @@ class Config:
 
     # File upload
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif', 'avif', 'heic'}
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB — Cloudinary handles actual size limits
+    MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB — Cloudinary enforces its own limits per resource type
 
     # Cloudinary
     CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
