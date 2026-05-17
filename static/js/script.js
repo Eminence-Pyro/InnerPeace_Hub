@@ -1,25 +1,20 @@
-// Hamburger Menu
+// ─── Hamburger Menu ───────────────────────────────────────────
 const hamburger = document.getElementById('hamburger');
-const navLinks = document.getElementById('nav-links');
+const navLinks  = document.getElementById('nav-links');
 const navOverlay = document.getElementById('nav-overlay');
 
 if (hamburger && navLinks && navOverlay) {
-  // Toggle menu on hamburger click
   hamburger.addEventListener('click', (e) => {
     e.stopPropagation();
     hamburger.classList.toggle('active');
     navLinks.classList.toggle('open');
     navOverlay.classList.toggle('active');
   });
-
-  // Close menu on overlay click
   navOverlay.addEventListener('click', () => {
     hamburger.classList.remove('active');
     navLinks.classList.remove('open');
     navOverlay.classList.remove('active');
   });
-
-  // Close menu on link click
   navLinks.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', () => {
       hamburger.classList.remove('active');
@@ -27,8 +22,6 @@ if (hamburger && navLinks && navOverlay) {
       navOverlay.classList.remove('active');
     });
   });
-
-  // Close menu on ESC key
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       hamburger.classList.remove('active');
@@ -38,255 +31,280 @@ if (hamburger && navLinks && navOverlay) {
   });
 }
 
-// Carousel - only runs if carousel exists on the page
-const track = document.querySelector('.carousel-track');
 
-if (track) {
-  const cards = document.querySelectorAll('.blog-card');
-  const prevBtn = document.querySelector('.prev-btn');
-  const nextBtn = document.querySelector('.next-btn');
-  const dots = document.querySelectorAll('.dot');
+// ─── Carousel (works on ALL screen sizes) ──────────────────────
+(function () {
+  const track     = document.querySelector('.carousel-track');
+  if (!track) return;
+
+  const container = document.querySelector('.carousel-track-container');
+  const cards     = Array.from(document.querySelectorAll('.carousel-track .blog-card'));
+  const prevBtn   = document.querySelector('.prev-btn');
+  const nextBtn   = document.querySelector('.next-btn');
+  const dots      = Array.from(document.querySelectorAll('.dot'));
+
+  if (!cards.length) return;
 
   let currentIndex = 0;
-  let autoPlayInterval;
+  let autoPlayInterval = null;
 
-  const visibleCards = () => window.innerWidth <= 768 ? 1 : 3;
+  function getVisibleCount() {
+    const w = window.innerWidth;
+    if (w <= 640)  return 1;
+    if (w <= 1024) return 2;
+    return 3;
+  }
 
-  function updateCarousel() {
-    const cardWidth = track.parentElement.offsetWidth / visibleCards();
+  function maxIndex() {
+    return Math.max(0, cards.length - getVisibleCount());
+  }
+
+  function getCardWidth() {
+    // Use the container width divided by visible count, minus gap
     const gap = 24;
-    track.style.transform = `translateX(-${currentIndex * (cardWidth + gap)}px)`;
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === currentIndex);
+    const visible = getVisibleCount();
+    return (container.offsetWidth - gap * (visible - 1)) / visible;
+  }
+
+  function setCardWidths() {
+    const w = getCardWidth();
+    cards.forEach(card => {
+      card.style.flex = '0 0 ' + w + 'px';
+      card.style.width = w + 'px';
     });
   }
 
-  function goToNext() {
-    const maxIndex = cards.length - visibleCards();
-    currentIndex = currentIndex >= maxIndex ? 0 : currentIndex + 1;
+  function updateCarousel(animate) {
+    setCardWidths();
+    const cardWidth = getCardWidth();
+    const gap = 24;
+    const offset = currentIndex * (cardWidth + gap);
+    if (animate === false) {
+      track.style.transition = 'none';
+    } else {
+      track.style.transition = 'transform 0.5s ease';
+    }
+    track.style.transform = 'translateX(-' + offset + 'px)';
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === currentIndex));
+  }
+
+  function clampIndex() {
+    currentIndex = Math.max(0, Math.min(currentIndex, maxIndex()));
+  }
+
+  function goNext() {
+    currentIndex = currentIndex >= maxIndex() ? 0 : currentIndex + 1;
     updateCarousel();
   }
 
-  function goToPrev() {
-    const maxIndex = cards.length - visibleCards();
-    currentIndex = currentIndex <= 0 ? maxIndex : currentIndex - 1;
+  function goPrev() {
+    currentIndex = currentIndex <= 0 ? maxIndex() : currentIndex - 1;
     updateCarousel();
   }
 
   function startAutoPlay() {
-    autoPlayInterval = setInterval(goToNext, 3000);
+    stopAutoPlay();
+    autoPlayInterval = setInterval(goNext, 3500);
   }
 
   function stopAutoPlay() {
     clearInterval(autoPlayInterval);
+    autoPlayInterval = null;
   }
 
-  nextBtn.addEventListener('click', () => {
-    goToNext();
-    stopAutoPlay();
-    startAutoPlay();
-  });
-
-  prevBtn.addEventListener('click', () => {
-    goToPrev();
-    stopAutoPlay();
-    startAutoPlay();
-  });
+  if (nextBtn) nextBtn.addEventListener('click', () => { goNext(); stopAutoPlay(); startAutoPlay(); });
+  if (prevBtn) prevBtn.addEventListener('click', () => { goPrev(); stopAutoPlay(); startAutoPlay(); });
 
   dots.forEach((dot, i) => {
     dot.addEventListener('click', () => {
       currentIndex = i;
+      clampIndex();
       updateCarousel();
       stopAutoPlay();
       startAutoPlay();
     });
   });
 
+  // Touch/swipe
   let touchStartX = 0;
-  track.addEventListener('touchstart', e => {
-    touchStartX = e.touches[0].clientX;
-    stopAutoPlay();
-  });
-
+  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; stopAutoPlay(); }, { passive: true });
   track.addEventListener('touchend', e => {
     const diff = touchStartX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      diff > 0 ? goToNext() : goToPrev();
-    }
+    if (Math.abs(diff) > 50) { diff > 0 ? goNext() : goPrev(); }
     startAutoPlay();
   });
 
-  window.addEventListener('resize', updateCarousel);
+  // Resize — recalculate without animation
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      clampIndex();
+      updateCarousel(false);
+      // Re-enable transition after forced snap
+      setTimeout(() => { track.style.transition = 'transform 0.5s ease'; }, 50);
+    }, 100);
+  });
 
+  // Init
+  updateCarousel(false);
+  setTimeout(() => { track.style.transition = 'transform 0.5s ease'; }, 50);
   startAutoPlay();
-}
+})();
 
-// Reactions
-const reactionBtns = document.querySelectorAll('.reaction-btn');
 
-if (reactionBtns.length > 0) {
-  // Create unique key per page
-  const pageKey = 'reactions_' + window.location.pathname;
-  const userKey = 'userReacted_' + window.location.pathname;
+// ─── Scroll To Top Button ──────────────────────────────────────
+(function () {
+  const btn = document.getElementById('scrollTopBtn');
+  if (!btn) return;
 
-  const savedReactions = JSON.parse(localStorage.getItem(pageKey) || '{}');
-  const userReacted = localStorage.getItem(userKey);
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  }, { passive: true });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+})();
+
+
+// ─── Reading Progress Bar ──────────────────────────────────────
+(function () {
+  const bar = document.getElementById('progress-bar');
+  if (!bar) return;
+  window.addEventListener('scroll', () => {
+    const scrollTop  = window.scrollY;
+    const docHeight  = document.body.scrollHeight - window.innerHeight;
+    const progress   = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    bar.style.width  = progress + '%';
+  }, { passive: true });
+})();
+
+
+// ─── Reactions ────────────────────────────────────────────────
+(function () {
+  const reactionBtns = document.querySelectorAll('.reaction-btn');
+  if (!reactionBtns.length) return;
+
+  const pageKey  = 'reactions_' + window.location.pathname;
+  const userKey  = 'userReacted_' + window.location.pathname;
+  const saved    = JSON.parse(localStorage.getItem(pageKey) || '{}');
+  const reacted  = localStorage.getItem(userKey);
 
   reactionBtns.forEach(btn => {
-    const type = btn.dataset.reaction;
-    const count = savedReactions[type] || 0;
+    const type  = btn.dataset.reaction;
+    const count = saved[type] || 0;
     btn.querySelector('.reaction-count').textContent = count;
-
-    if (userReacted === type) {
-      btn.classList.add('reacted');
-    }
+    if (reacted === type) btn.classList.add('reacted');
   });
 
   reactionBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const type = btn.dataset.reaction;
-      const previousReaction = localStorage.getItem(userKey);
+      const prev = localStorage.getItem(userKey);
 
-      if (previousReaction === type) {
-        savedReactions[type] = Math.max(0, (savedReactions[type] || 0) - 1);
-        btn.querySelector('.reaction-count').textContent = savedReactions[type];
+      if (prev === type) {
+        saved[type] = Math.max(0, (saved[type] || 0) - 1);
+        btn.querySelector('.reaction-count').textContent = saved[type];
         btn.classList.remove('reacted');
         localStorage.removeItem(userKey);
       } else {
-        if (previousReaction) {
-          savedReactions[previousReaction] = Math.max(0, (savedReactions[previousReaction] || 0) - 1);
-          document.querySelector(`[data-reaction="${previousReaction}"]`)
-            .querySelector('.reaction-count').textContent = savedReactions[previousReaction];
-          document.querySelector(`[data-reaction="${previousReaction}"]`)
-            .classList.remove('reacted');
+        if (prev) {
+          saved[prev] = Math.max(0, (saved[prev] || 0) - 1);
+          const prevBtn = document.querySelector('[data-reaction="' + prev + '"]');
+          if (prevBtn) {
+            prevBtn.querySelector('.reaction-count').textContent = saved[prev];
+            prevBtn.classList.remove('reacted');
+          }
         }
-
-        savedReactions[type] = (savedReactions[type] || 0) + 1;
-        btn.querySelector('.reaction-count').textContent = savedReactions[type];
+        saved[type] = (saved[type] || 0) + 1;
+        btn.querySelector('.reaction-count').textContent = saved[type];
         btn.classList.add('reacted');
         localStorage.setItem(userKey, type);
       }
-
-      localStorage.setItem(pageKey, JSON.stringify(savedReactions));
+      localStorage.setItem(pageKey, JSON.stringify(saved));
     });
   });
-}
+})();
 
-// Disqus Comments
-if (document.getElementById('disqus_thread')) {
-  var disqus_config = function () {
-    this.page.url = window.location.href;
-    this.page.identifier = window.location.pathname;
-  };
 
-  (function() {
-    var d = document, s = d.createElement('script');
-    s.src = 'https://innerpeacehub.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-  })();
-}
-
-// Contact Form Validation
+// ─── Contact Form Validation ───────────────────────────────────
 function submitForm() {
   let isValid = true;
-
   const fields = [
-    { id: 'name', error: 'name-error', message: 'Please enter your name' },
-    { id: 'email', error: 'email-error', message: 'Please enter a valid email' },
+    { id: 'name',    error: 'name-error',    message: 'Please enter your name' },
+    { id: 'email',   error: 'email-error',   message: 'Please enter a valid email' },
     { id: 'subject', error: 'subject-error', message: 'Please enter a subject' },
     { id: 'message', error: 'message-error', message: 'Please enter your message' }
   ];
-
-  // Clear previous errors
   fields.forEach(field => {
-    document.getElementById(field.id).classList.remove('error');
-    document.getElementById(field.error).textContent = '';
+    const el = document.getElementById(field.id);
+    const errEl = document.getElementById(field.error);
+    if (el) el.classList.remove('error');
+    if (errEl) errEl.textContent = '';
   });
-
-  // Validate each field
   fields.forEach(field => {
-    const input = document.getElementById(field.id);
-    const value = input.value.trim();
-
+    const el = document.getElementById(field.id);
+    const errEl = document.getElementById(field.error);
+    if (!el) return;
+    const value = el.value.trim();
     if (!value) {
-      input.classList.add('error');
-      document.getElementById(field.error).textContent = field.message;
+      el.classList.add('error');
+      if (errEl) errEl.textContent = field.message;
       isValid = false;
     }
-
-    // Extra email validation
-    if (field.id === 'email' && value) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(value)) {
-        input.classList.add('error');
-        document.getElementById(field.error).textContent = 'Please enter a valid email address';
-        isValid = false;
-      }
+    if (field.id === 'email' && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      el.classList.add('error');
+      if (errEl) errEl.textContent = 'Please enter a valid email address';
+      isValid = false;
     }
   });
-
   if (isValid) {
-    // Show success message
-    document.getElementById('contact-form').style.display = 'none';
-    document.getElementById('form-success').style.display = 'block';
+    const form = document.getElementById('contact-form');
+    const success = document.getElementById('form-success');
+    if (form) form.style.display = 'none';
+    if (success) success.style.display = 'block';
   }
 }
 
-// Scroll Reveal Animations
-const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
 
-if (revealElements.length > 0) {
-  const revealObserver = new IntersectionObserver((entries) => {
+// ─── Scroll Reveal Animations ──────────────────────────────────
+(function () {
+  const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  if (!els.length) return;
+  const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
+        observer.unobserve(entry.target);
       }
     });
-  }, {
-    threshold: 0.15
-  });
+  }, { threshold: 0.15 });
+  els.forEach(el => observer.observe(el));
+})();
 
-  revealElements.forEach(el => revealObserver.observe(el));
-}
 
-// Auto-dismiss flash messages
-const flashMessages = document.querySelectorAll('.flash-message');
-flashMessages.forEach(msg => {
+// ─── Auto-dismiss flash messages ──────────────────────────────
+document.querySelectorAll('.flash-message').forEach(msg => {
   setTimeout(() => {
-    msg.style.opacity = '0';
     msg.style.transition = 'opacity 0.5s';
+    msg.style.opacity = '0';
     setTimeout(() => msg.remove(), 500);
   }, 4000);
 });
 
-// Reading Progress Bar
-window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY;
-  const docHeight = document.body.scrollHeight - window.innerHeight;
-  if (docHeight > 0) {
-    const progress = (scrollTop / docHeight) * 100;
-    const bar = document.getElementById('progress-bar');
-    if (bar) bar.style.width = progress + '%';
-  }
-});
 
-// Scroll to Top Button
-const scrollTopBtn = document.getElementById('scrollTopBtn');
-window.addEventListener('scroll', () => {
-  if (scrollTopBtn) {
-    const isVisible = window.scrollY > 300;
-    if (isVisible) {
-      scrollTopBtn.classList.add('visible');
-    } else {
-      scrollTopBtn.classList.remove('visible');
+// ─── Copy Post Link ───────────────────────────────────────────
+function copyPostLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const label = document.getElementById('copy-label');
+    if (label) {
+      label.textContent = 'Copied!';
+      setTimeout(() => { label.textContent = 'Copy Link'; }, 2000);
     }
-  }
-});
-if (scrollTopBtn) {
-  scrollTopBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
