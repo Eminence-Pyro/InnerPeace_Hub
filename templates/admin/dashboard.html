@@ -30,6 +30,10 @@
           Subscribers
         </a>
 
+        <a href="{{ url_for('admin.comment_moderation') }}" class="btn-secondary">
+          <i class="fas fa-comments"></i>
+          Comments{% if pending_comments > 0 %} <span class="unread-badge">{{ pending_comments }}</span>{% endif %}
+        </a>
         <a href="{{ url_for('auth.admin_logout') }}" class="btn-secondary">
           <i class="fas fa-sign-out-alt"></i>
           Logout
@@ -39,25 +43,34 @@
 
     <!-- Stats -->
     <div class="dashboard-stats">
-
       <div class="stat-card">
         <i class="fas fa-file-alt"></i>
         <h3>{{ posts|length }}</h3>
         <p>Total Posts</p>
       </div>
-
       <div class="stat-card">
         <i class="fas fa-envelope"></i>
         <h3>{{ messages|length }}</h3>
         <p>Total Messages</p>
       </div>
-
       <div class="stat-card">
         <i class="fas fa-bell"></i>
         <h3>{{ unread }}</h3>
         <p>Unread Messages</p>
       </div>
-
+      <div class="stat-card">
+        <i class="fas fa-users"></i>
+        <h3>{{ subscribers }}</h3>
+        <p>Subscribers</p>
+      </div>
+      <div class="stat-card {% if pending_comments > 0 %}stat-card-alert{% endif %}">
+        <i class="fas fa-comments"></i>
+        <h3>{{ pending_comments }}</h3>
+        <p>Pending Comments</p>
+        {% if pending_comments > 0 %}
+          <a href="{{ url_for('admin.comment_moderation') }}" class="stat-card-link">Review →</a>
+        {% endif %}
+      </div>
     </div>
 
     <div class="dashboard-grid">
@@ -87,6 +100,7 @@
                 <th>Title</th>
                 <th>Category</th>
                 <th>Status</th>
+                <th>Views</th>
                 <th>Date</th>
                 <th>Actions</th>
               </tr>
@@ -114,6 +128,10 @@
                   <span class="status-badge status-{{ post.status }}">
                     {{ post.status }}
                   </span>
+                </td>
+
+                <td>
+                  <span class="view-count"><i class="fas fa-eye" style="font-size:11px;color:#999;"></i> {{ post.view_count or 0 }}</span>
                 </td>
 
                 <td>
