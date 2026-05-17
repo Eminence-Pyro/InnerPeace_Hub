@@ -3037,3 +3037,44 @@ input[type="url"], input[type="number"], textarea, select {
     font-size: 15px;
   }
 }
+
+
+/* ===========================
+   Audio Upload Area
+   =========================== */
+.audio-upload-area {
+  position: relative;
+  border: 2px dashed var(--border, #e8e0f0);
+  border-radius: 12px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  background: var(--input-bg, #fff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.audio-upload-area:hover,
+.audio-upload-area.drag-over {
+  border-color: #6B2D8B;
+  background: #f9f0ff;
+}
+
+.upload-progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--border, #e8e0f0);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.upload-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #6B2D8B, #D4A843);
+  border-radius: 99px;
+  transition: width 0.3s ease;
+  width: 0%;
+}
