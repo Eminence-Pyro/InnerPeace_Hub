@@ -4,6 +4,18 @@
   {% if post %}Edit Post{% else %}Create Post{% endif %} - InnerPeace Hub
 {% endblock %}
 
+
+{% block extra_head %}
+<style>
+  /* Ensure CKEditor toolbar and editing area are fully interactive */
+  .cke { border-radius: 8px !important; border: 1.5px solid #ddd !important; }
+  .cke_top { border-radius: 8px 8px 0 0 !important; background: #f9f5ff !important; }
+  .cke_editable { min-height: 320px !important; font-size: 1rem !important; line-height: 1.8 !important; }
+  .cke_combo_text, .cke_button_label { user-select: none; }
+  /* Prevent body dark mode vars from interfering with CKEditor iframe */
+  .cke_wysiwyg_frame, .cke_wysiwyg_div { background: #fff !important; }
+</style>
+{% endblock %}
 {% block content %}
 
 <section class="admin-create">
@@ -84,23 +96,9 @@
       <!-- CKEditor Content -->
       <div class="form-group">
         <label for="content">Content</label>
-
         {{ ckeditor.load() }}
-        <textarea name="content" id="content">
-{{ post.content if post else '' }}
-        </textarea>
-        {{ ckeditor.config(
-            name='content',
-            toolbar=[
-                ['Source', '-', 'Bold', 'Italic', 'Underline'],
-                ['NumberedList', 'BulletedList'],
-                ['Link', 'Unlink'],
-                ['Image', 'Table'],
-                ['Format', 'FontSize'],
-                ['TextColor', 'BGColor'],
-                ['Maximize']
-            ]
-        ) }}
+        <textarea name="content" id="content" class="ckeditor-area">{{ post.content if post else '' }}</textarea>
+        {{ ckeditor.config(name='content') }}
       </div>
 
       <!-- Image -->
