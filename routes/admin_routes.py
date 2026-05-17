@@ -38,7 +38,20 @@ def create_post():
         excerpt = request.form.get('excerpt')
         content = request.form.get('content')
         read_time = request.form.get('read_time')
-        status = request.form.get('status', 'draft')  # draft or published
+        status = request.form.get('status', 'draft')
+        scheduled_for = None
+        if status == 'scheduled':
+            from datetime import datetime
+            sched_str = request.form.get('scheduled_for', '').strip()
+            if sched_str:
+                try:
+                    scheduled_for = datetime.fromisoformat(sched_str)
+                except ValueError:
+                    flash('Invalid schedule date. Post saved as draft.')
+                    status = 'draft'
+            else:
+                flash('Scheduled date required. Post saved as draft.')
+                status = 'draft'
         is_featured = request.form.get('is_featured') == 'on'
         tags = request.form.get('tags', '')
         image_file = request.files.get('image')
@@ -72,6 +85,7 @@ def create_post():
             content=content,
             read_time=read_time,
             status=status,
+            scheduled_for=scheduled_for,
             is_featured=is_featured,
             tags=tags,
             image=image_filename
@@ -143,7 +157,22 @@ def edit_post(post_id):
         post.excerpt  = request.form.get('excerpt')
         post.content  = request.form.get('content')
         post.read_time = request.form.get('read_time')
-        post.status   = request.form.get('status', 'draft')
+        new_status = request.form.get('status', 'draft')
+        if new_status == 'scheduled':
+            from datetime import datetime
+            sched_str = request.form.get('scheduled_for', '').strip()
+            if sched_str:
+                try:
+                    post.scheduled_for = datetime.fromisoformat(sched_str)
+                    post.status = 'scheduled'
+                except ValueError:
+                    flash('Invalid schedule date. Status unchanged.')
+                    post.status = post.status
+            else:
+                flash('Scheduled date required. Status unchanged.')
+        else:
+            post.status = new_status
+            post.scheduled_for = None
         post.is_featured = request.form.get('is_featured') == 'on'
         post.tags     = request.form.get('tags', '')
 
@@ -316,3 +345,36 @@ def delete_episode(episode_id):
     flash('Episode deleted.')
     return redirect(url_for('admin.podcast_list'))
 
+
+
+# ─── Comment Moderation ────────────────────────────────────────────────────────
+
+@admin_bp.route('/admin/comments')
+@login_required
+def comment_moderation():
+    from models import Comment
+    pending   = Comment.query.filter_by(approved=False).order_by(Comment.date_posted.desc()).all()
+    approved  = Comment.query.filter_by(approved=True).order_by(Comment.date_posted.desc()).limit(30).all()
+    return render_template('admin/comments.html', pending=pending, approved=approved)
+
+
+@admin_bp.route('/admin/comments/<int:comment_id>/approve', methods=['POST'])
+@login_required
+def approve_comment(comment_id):
+    from models import Comment
+    comment = Comment.query.get_or_404(comment_id)
+    comment.approved = True
+    db.session.commit()
+    flash(f'Comment by {comment.name} approved.')
+    return redirect(url_for('admin.comment_moderation'))
+
+
+@admin_bp.route('/admin/comments/<int:comment_id>/delete', methods=['POST'])
+@login_required
+def delete_comment(comment_id):
+    from models import Comment
+    comment = Comment.query.get_or_404(comment_id)
+    db.session.delete(comment)
+    db.session.commit()
+    flash('Comment deleted.')
+    return redirect(url_for('admin.comment_moderation'))
