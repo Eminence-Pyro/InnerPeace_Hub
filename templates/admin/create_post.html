@@ -82,6 +82,14 @@
 
       </div>
 
+      <!-- Scheduled publish time -->
+      <div class="form-group" id="schedule-group" style="display:{% if post and post.status == 'scheduled' %}block{% else %}none{% endif %};">
+        <label for="scheduled_for">Publish At (your local time)</label>
+        <input type="datetime-local" id="scheduled_for" name="scheduled_for"
+               value="{{ post.scheduled_for.strftime('%Y-%m-%dT%H:%M') if post and post.scheduled_for else '' }}" />
+        <small style="color:#888;">The post will go live automatically at this time.</small>
+      </div>
+
       <!-- Excerpt -->
       <div class="form-group">
         <label for="excerpt">Excerpt</label>
@@ -153,4 +161,12 @@
   </div>
 </section>
 
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function toggleSchedule(val) {
+  document.getElementById('schedule-group').style.display = (val === 'scheduled') ? 'block' : 'none';
+}
+</script>
 {% endblock %}
