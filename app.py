@@ -65,6 +65,17 @@ def create_app(config_class=config):
             print('Default admin created. Set ADMIN_PASSWORD in your .env file.')
 
 
+
+    @app.errorhandler(413)
+    def file_too_large(e):
+        from flask import request, redirect, url_for, flash
+        flash('The file you uploaded is too large. Please compress it and try again.')
+        return redirect(request.referrer or url_for('admin.admin_dashboard'))
+
+    @app.errorhandler(400)
+    def bad_request(e):
+        return render_template('errors/404.html'), 400
+
     # Error handlers
     @app.errorhandler(404)
     def not_found(e):
