@@ -13,11 +13,14 @@ admin_bp = Blueprint('admin', __name__)
 @admin_bp.route('/admin')
 @login_required
 def admin_dashboard():
-    posts = Post.query.order_by(Post.date_posted.desc()).all()
-    messages = Message.query.order_by(Message.date_sent.desc()).all()
-    unread = Message.query.filter_by(is_read=False).count()
+    from models import Comment, Subscriber
+    posts     = Post.query.order_by(Post.date_posted.desc()).all()
+    messages  = Message.query.order_by(Message.date_sent.desc()).all()
+    unread    = Message.query.filter_by(is_read=False).count()
     published = Post.query.filter_by(status='published').count()
-    drafts = Post.query.filter_by(status='draft').count()
+    drafts    = Post.query.filter_by(status='draft').count()
+    pending_comments = Comment.query.filter_by(approved=False).count()
+    subscribers      = Subscriber.query.filter_by(is_active=True).count()
 
     return render_template(
         'admin/dashboard.html',
@@ -25,7 +28,9 @@ def admin_dashboard():
         messages=messages,
         unread=unread,
         published=published,
-        drafts=drafts
+        drafts=drafts,
+        pending_comments=pending_comments,
+        subscribers=subscribers
     )
 
 
