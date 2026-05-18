@@ -495,3 +495,124 @@ def send_digest():
     flash(f'Digest sent to {sent} subscriber{"s" if sent != 1 else ""}.' +
           (f' {failed} failed.' if failed else ''))
     return redirect(url_for('admin.subscribers'))
+
+
+# ─── Authors (Improvement 10) ─────────────────────────────────────────────────
+
+@admin_bp.route('/admin/authors')
+@login_required
+def author_list():
+    from models import Author
+    authors = Author.query.order_by(Author.name).all()
+    return render_template('admin/authors.html', authors=authors)
+
+
+@admin_bp.route('/admin/authors/create', methods=['GET', 'POST'])
+@login_required
+def create_author():
+    from models import Author
+    from utils import generate_slug
+    if request.method == 'POST':
+        name    = request.form.get('name', '').strip()
+        bio     = request.form.get('bio', '').strip()
+        email   = request.form.get('email', '').strip()
+        twitter = request.form.get('twitter', '').strip().lstrip('@')
+        if not name:
+            flash('Author name is required.')
+            return redirect(url_for('admin.create_author'))
+
+        slug = generate_slug(name)
+        existing = Author.query.filter_by(slug=slug).first()
+        if existing:
+            import uuid
+            slug = slug + '-' + uuid.uuid4().hex[:4]
+
+        avatar_url = None
+        avatar_file = request.files.get('avatar')
+        if avatar_file and avatar_file.filename and allowed_file(avatar_file.filename):
+            try:
+                result = cloudinary.uploader.upload(avatar_file, folder='authors')
+                avatar_url = result['secure_url']
+            except Exception as e:
+                flash(f'Avatar upload failed: {e}')
+
+        author = Author(name=name, slug=slug, bio=bio, email=email,
+                        twitter=twitter, avatar=avatar_url)
+        db.session.add(author)
+        db.session.commit()
+        flash(f'Author "{name}" created.')
+        return redirect(url_for('admin.author_list'))
+
+    return render_template('admin/create_author.html')
+
+
+@admin_bp.route('/admin/authors/<int:author_id>/delete', methods=['POST'])
+@login_required
+def delete_author(author_id):
+    from models import Author
+    author = Author.query.get_or_404(author_id)
+    # Unlink posts before deleting
+    for post in author.posts:
+        post.author_id = None
+    db.session.delete(author)
+    db.session.commit()
+    flash(f'Author "{author.name}" deleted.')
+    return redirect(url_for('admin.author_list'))
+
+
+# ─── Series (Improvement 11) ──────────────────────────────────────────────────
+
+@admin_bp.route('/admin/series')
+@login_required
+def series_list():
+    from models import PostSeries
+    series = PostSeries.query.order_by(PostSeries.title).all()
+    return render_template('admin/series_list.html', series=series)
+
+
+@admin_bp.route('/admin/series/create', methods=['GET', 'POST'])
+@login_required
+def create_series():
+    from models import PostSeries, PostSeriesEntry, Post as PostModel
+    from utils import generate_slug
+    if request.method == 'POST':
+        title       = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        post_ids    = request.form.getlist('post_ids')  # ordered list
+
+        if not title:
+            flash('Series title is required.')
+            return redirect(url_for('admin.create_series'))
+
+        slug = generate_slug(title)
+        existing = PostSeries.query.filter_by(slug=slug).first()
+        if existing:
+            import uuid as _uuid
+            slug = slug + '-' + _uuid.uuid4().hex[:4]
+
+        series = PostSeries(title=title, slug=slug, description=description)
+        db.session.add(series)
+        db.session.flush()  # get series.id
+
+        for pos, pid in enumerate(post_ids, start=1):
+            entry = PostSeriesEntry(series_id=series.id, post_id=int(pid), position=pos)
+            db.session.add(entry)
+
+        db.session.commit()
+        flash(f'Series "{title}" created with {len(post_ids)} posts.')
+        return redirect(url_for('admin.series_list'))
+
+    posts = Post.query.filter_by(status='published').order_by(Post.date_posted.desc()).all()
+    return render_template('admin/create_series.html', posts=posts)
+
+
+@admin_bp.route('/admin/series/<int:series_id>/delete', methods=['POST'])
+@login_required
+def delete_series(series_id):
+    from models import PostSeries, PostSeriesEntry
+    series = PostSeries.query.get_or_404(series_id)
+    PostSeriesEntry.query.filter_by(series_id=series.id).delete()
+    db.session.delete(series)
+    db.session.commit()
+    flash(f'Series "{series.title}" deleted.')
+    return redirect(url_for('admin.series_list'))
