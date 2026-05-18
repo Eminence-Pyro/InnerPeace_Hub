@@ -66,11 +66,31 @@ def post(slug):
         except Exception:
             db.session.rollback()
 
-    related = Post.query.filter(
-        Post.category == post.category,
-        Post.id != post.id,
-        Post.status == 'published'
-    ).limit(2).all()
+    # ── Improvement 6: Related posts via tag + category similarity ──────────────
+    related = []
+    if post.tags:
+        tag_list = [t.strip() for t in post.tags.split(',') if t.strip()]
+        # Score each candidate post by how many tags it shares
+        candidates = Post.query.filter(
+            Post.status == 'published',
+            Post.id != post.id,
+            Post.category == post.category
+        ).all()
+        scored = []
+        for c in candidates:
+            c_tags = set(t.strip() for t in (c.tags or '').split(',') if t.strip())
+            score = len(set(tag_list) & c_tags)
+            scored.append((score, c))
+        scored.sort(key=lambda x: x[0], reverse=True)
+        related = [c for _, c in scored[:3]]
+
+    # Fall back to same-category if no tag matches
+    if not related:
+        related = Post.query.filter(
+            Post.category == post.category,
+            Post.id != post.id,
+            Post.status == 'published'
+        ).limit(3).all()
 
     # Only show approved comments publicly
     approved_comments = Comment.query.filter_by(
