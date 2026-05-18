@@ -71,7 +71,7 @@ def create_app(config_class=config):
 
     # Initialize database — run all pending migrations then seed admin
     with app.app_context():
-        from flask_migrate import upgrade as db_upgrade, stamp as db_stamp
+        from flask_migrate import upgrade as db_upgrade
         from sqlalchemy import inspect, text
 
         inspector = inspect(db.engine)
@@ -96,8 +96,11 @@ def create_app(config_class=config):
                 if 'approved' not in comment_cols:
                     conn.execute(text("ALTER TABLE comment ADD COLUMN approved BOOLEAN NOT NULL DEFAULT 0"))
                     print("[DB] Added comment.approved")
+                # Create alembic_version table and stamp latest revision directly via SQL
+                conn.execute(text("CREATE TABLE IF NOT EXISTS alembic_version (version_num VARCHAR(32) NOT NULL, CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num))"))
+                conn.execute(text("DELETE FROM alembic_version"))
+                conn.execute(text("INSERT INTO alembic_version (version_num) VALUES ('0f28bee38e6a')"))
                 conn.commit()
-            db_stamp('head')   # mark all migrations as applied
             print("[DB] Stamped migration head on existing schema.")
 
         else:
