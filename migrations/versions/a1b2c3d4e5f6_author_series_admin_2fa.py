@@ -58,7 +58,6 @@ def upgrade():
     # ── Add 2FA columns to admin ──────────────────────────────────────────────
     with op.batch_alter_table('admin', schema=None) as batch_op:
         batch_op.add_column(sa.Column('totp_secret',  sa.String(length=32), nullable=True))
-         expression
         batch_op.add_column(sa.Column('totp_enabled', sa.Boolean(), nullable=False,
                                       server_default=sa.false()))
 
