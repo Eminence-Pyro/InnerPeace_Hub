@@ -53,13 +53,38 @@ def create_app(config_class=config):
 
     # Initialize database — run all pending migrations then seed admin
     with app.app_context():
-        from flask_migrate import upgrade as db_upgrade
-        try:
-            db_upgrade()          # applies any pending Alembic migrations
-        except Exception as migrate_err:
-            # Fallback: if migrations directory not configured, create tables directly
-            print(f"[WARN] migrate upgrade failed ({migrate_err}), falling back to db.create_all()")
-            db.create_all()
+        from flask_migrate import upgrade as db_upgrade, stamp as db_stamp
+        from sqlalchemy import inspect, text
+
+        inspector = inspect(db.engine)
+        existing_tables = inspector.get_table_names()
+
+        if not existing_tables:
+            # Brand-new database: run all migrations from scratch
+            db_upgrade()
+
+        elif 'alembic_version' not in existing_tables:
+            # Tables exist (created by old db.create_all) but no migration history.
+            # Add missing columns manually then stamp as up-to-date so migrate doesn't re-run.
+            with db.engine.connect() as conn:
+                col_map = {col['name'] for col in inspector.get_columns('post')}
+                if 'view_count' not in col_map:
+                    conn.execute(text("ALTER TABLE post ADD COLUMN view_count INTEGER NOT NULL DEFAULT 0"))
+                    print("[DB] Added post.view_count")
+                if 'scheduled_for' not in col_map:
+                    conn.execute(text("ALTER TABLE post ADD COLUMN scheduled_for DATETIME"))
+                    print("[DB] Added post.scheduled_for")
+                comment_cols = {col['name'] for col in inspector.get_columns('comment')}
+                if 'approved' not in comment_cols:
+                    conn.execute(text("ALTER TABLE comment ADD COLUMN approved BOOLEAN NOT NULL DEFAULT 0"))
+                    print("[DB] Added comment.approved")
+                conn.commit()
+            db_stamp('head')   # mark all migrations as applied
+            print("[DB] Stamped migration head on existing schema.")
+
+        else:
+            # Normal case: db exists with migration history — just apply pending ones
+            db_upgrade()
 
         if not Admin.query.first():
             admin = Admin(
