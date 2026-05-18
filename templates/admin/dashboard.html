@@ -25,6 +25,16 @@
           Podcast
         </a>
 
+        <a href="{{ url_for('admin.author_list') }}" class="btn-secondary">
+          <i class="fas fa-user-friends"></i>
+          Authors
+        </a>
+
+        <a href="{{ url_for('admin.series_list') }}" class="btn-secondary">
+          <i class="fas fa-book-open"></i>
+          Series
+        </a>
+
         <a href="{{ url_for('admin.subscribers') }}" class="btn-secondary">
           <i class="fas fa-envelope"></i>
           Subscribers
