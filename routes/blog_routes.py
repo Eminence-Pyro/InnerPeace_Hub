@@ -307,3 +307,16 @@ def sitemap():
 @blog_bp.route('/offline')
 def offline():
     return render_template('offline.html')
+
+# ── PWA: serve sw.js from root for correct scope ─────────────────────────────
+@blog_bp.route('/sw.js')
+def service_worker():
+    from flask import send_from_directory, make_response
+    import os as _os
+    response = make_response(
+        send_from_directory(_os.path.join(blog_bp.root_path, '..', 'static'), 'sw.js')
+    )
+    response.headers['Content-Type'] = 'application/javascript'
+    response.headers['Service-Worker-Allowed'] = '/'
+    response.headers['Cache-Control'] = 'no-cache'
+    return response
