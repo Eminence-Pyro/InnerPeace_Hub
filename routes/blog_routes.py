@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import current_user
 from models import Post, Message, Subscriber, PodcastEpisode, Comment, db
@@ -158,3 +159,103 @@ def add_comment(slug):
     flash('Thanks! Your comment is awaiting moderation and will appear shortly. 🙏')
     return redirect(url_for('blog.post', slug=slug) + '#comments')
 
+# ── Improvement 5: Dedicated search results page ─────────────────────────────
+@blog_bp.route('/search')
+def search():
+    q = request.args.get('q', '').strip()
+    results = []
+    if q:
+        results = Post.query.filter(
+            Post.status == 'published',
+            db.or_(
+                Post.title.ilike('%' + q + '%'),
+                Post.excerpt.ilike('%' + q + '%'),
+                Post.tags.ilike('%' + q + '%'),
+                Post.category.ilike('%' + q + '%'),
+                Post.content.ilike('%' + q + '%'),
+            )
+        ).order_by(Post.date_posted.desc()).all()
+    return render_template('search.html', query=q, results=results)
+
+
+# ── Improvement 8: RSS Feed ──────────────────────────────────────────────────
+@blog_bp.route('/rss.xml')
+def rss_feed():
+    import html as html_mod
+    from flask import Response
+    posts = Post.query.filter_by(status='published').order_by(Post.date_posted.desc()).limit(20).all()
+    site_url = os.environ.get('SITE_URL', 'https://innerpeacehub.onrender.com')
+    items = ''
+    for p in posts:
+        pub_date = p.date_posted.strftime('%a, %d %b %Y %H:%M:%S +0000') if p.date_posted else ''
+        excerpt = html_mod.escape(p.excerpt or '')
+        title   = html_mod.escape(p.title)
+        cat     = html_mod.escape(p.category or '')
+        items += (
+            '<item>'
+            '<title>' + title + '</title>'
+            '<link>' + site_url + '/post/' + p.slug + '</link>'
+            '<guid isPermaLink="true">' + site_url + '/post/' + p.slug + '</guid>'
+            '<description>' + excerpt + '</description>'
+            '<category>' + cat + '</category>'
+            '<pubDate>' + pub_date + '</pubDate>'
+            '</item>'
+        )
+    rss = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">'
+        '<channel>'
+        '<title>InnerPeace Hub</title>'
+        '<link>' + site_url + '</link>'
+        '<description>Healing, faith, and personal growth</description>'
+        '<language>en-us</language>'
+        '<atom:link href="' + site_url + '/rss.xml" rel="self" type="application/rss+xml"/>'
+        + items +
+        '</channel></rss>'
+    )
+    return Response(rss, mimetype='application/rss+xml')
+
+
+# ── Improvement 9: Sitemap ───────────────────────────────────────────────────
+@blog_bp.route('/sitemap.xml')
+def sitemap():
+    from datetime import datetime
+    from flask import Response
+    site_url = os.environ.get('SITE_URL', 'https://innerpeacehub.onrender.com')
+    posts = Post.query.filter_by(status='published').order_by(Post.date_posted.desc()).all()
+    today = datetime.utcnow().strftime('%Y-%m-%d')
+    static_pages = [
+        ('/', '1.0', 'weekly'),
+        ('/blog', '0.9', 'daily'),
+        ('/podcast', '0.8', 'weekly'),
+        ('/about', '0.6', 'monthly'),
+        ('/contact', '0.5', 'monthly'),
+        ('/search', '0.5', 'monthly'),
+    ]
+    urls = ''
+    for path, priority, freq in static_pages:
+        urls += (
+            '<url>'
+            '<loc>' + site_url + path + '</loc>'
+            '<lastmod>' + today + '</lastmod>'
+            '<changefreq>' + freq + '</changefreq>'
+            '<priority>' + priority + '</priority>'
+            '</url>'
+        )
+    for p in posts:
+        lastmod = p.date_posted.strftime('%Y-%m-%d') if p.date_posted else today
+        urls += (
+            '<url>'
+            '<loc>' + site_url + '/post/' + p.slug + '</loc>'
+            '<lastmod>' + lastmod + '</lastmod>'
+            '<changefreq>monthly</changefreq>'
+            '<priority>0.7</priority>'
+            '</url>'
+        )
+    xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        + urls +
+        '</urlset>'
+    )
+    return Response(xml, mimetype='application/xml')
