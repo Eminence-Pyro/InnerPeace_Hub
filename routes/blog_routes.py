@@ -97,7 +97,30 @@ def post(slug):
         post_id=post.id, approved=True
     ).order_by(Comment.date_posted.asc()).all()
 
-    return render_template('post.html', post=post, related=related, comments=approved_comments)
+    # ── Improvement 11: Series prev/next navigation ──────────────────────────
+    series_data = None
+    if post.series_entries:
+        entry = post.series_entries[0]
+        series = entry.series
+        positions = [e.post_id for e in series.entries]
+        current_pos = entry.position
+        prev_post = None
+        next_post = None
+        for e in series.entries:
+            if e.position == current_pos - 1:
+                prev_post = e.post
+            if e.position == current_pos + 1:
+                next_post = e.post
+        series_data = {
+            'series': series,
+            'position': current_pos,
+            'total': len(positions),
+            'prev': prev_post,
+            'next': next_post,
+        }
+
+    return render_template('post.html', post=post, related=related,
+                           comments=approved_comments, series_data=series_data)
 
 
 @blog_bp.route('/about')
