@@ -60,11 +60,7 @@
 
 - Render DB expires June 3 — migration to Neon complete ✅
 - Both databases verified identical (all tables, all rows, alembic version matched)
-- **Action required:** Update `DATABASE_URL` env var on Render dashboard to:
-  ```
-  postgresql://neondb_owner:npg_UomfCu6pq5RI@ep-empty-base-aqc2hk3i-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
-  ```
-
+- **Action required:** Update `DATABASE_URL` env var on Render dashboard to: `RENDER_URL=db`
 ---
 
 ## ⚠️ Action Items
