@@ -82,10 +82,11 @@ def create_app(config_class=config):
             db_upgrade()
 
         elif 'alembic_version' not in existing_tables:
-            # Tables exist (created by old db.create_all) but no migration history.
-            # Add missing columns manually then stamp as up-to-date so migrate doesn't re-run.
+            # Tables exist but no migration history — patch columns + create new tables + stamp
             with db.engine.connect() as conn:
-                # ── post table ───────────────────────────────────────────────
+                all_tables = set(inspector.get_table_names())
+
+                # post columns
                 col_map = {col['name'] for col in inspector.get_columns('post')}
                 if 'view_count' not in col_map:
                     conn.execute(text("ALTER TABLE post ADD COLUMN view_count INTEGER NOT NULL DEFAULT 0"))
@@ -99,17 +100,14 @@ def create_app(config_class=config):
                 if 'tags' not in col_map:
                     conn.execute(text("ALTER TABLE post ADD COLUMN tags VARCHAR(300)"))
                     print("[DB] Added post.tags")
-                if 'author_id' not in col_map:
-                    conn.execute(text("ALTER TABLE post ADD COLUMN author_id INTEGER REFERENCES author(id)"))
-                    print("[DB] Added post.author_id")
 
-                # ── comment table ─────────────────────────────────────────────
+                # comment columns
                 comment_cols = {col['name'] for col in inspector.get_columns('comment')}
                 if 'approved' not in comment_cols:
                     conn.execute(text("ALTER TABLE comment ADD COLUMN approved BOOLEAN NOT NULL DEFAULT 0"))
                     print("[DB] Added comment.approved")
 
-                # ── admin table ───────────────────────────────────────────────
+                # admin columns
                 admin_cols = {col['name'] for col in inspector.get_columns('admin')}
                 if 'totp_secret' not in admin_cols:
                     conn.execute(text("ALTER TABLE admin ADD COLUMN totp_secret VARCHAR(32)"))
@@ -118,16 +116,79 @@ def create_app(config_class=config):
                     conn.execute(text("ALTER TABLE admin ADD COLUMN totp_enabled BOOLEAN NOT NULL DEFAULT 0"))
                     print("[DB] Added admin.totp_enabled")
 
-                # ── stamp alembic_version ─────────────────────────────────────
+                # author table
+                if 'author' not in all_tables:
+                    sql = ("CREATE TABLE author ("
+                           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                           "name VARCHAR(100) NOT NULL,"
+                           "slug VARCHAR(120) NOT NULL UNIQUE,"
+                           "bio TEXT,"
+                           "avatar VARCHAR(500),"
+                           "email VARCHAR(150),"
+                           "twitter VARCHAR(100))")
+                    conn.execute(text(sql))
+                    print("[DB] Created author table")
+
+                # author_id on post
+                col_map2 = {col['name'] for col in inspector.get_columns('post')}
+                if 'author_id' not in col_map2:
+                    conn.execute(text("ALTER TABLE post ADD COLUMN author_id INTEGER REFERENCES author(id)"))
+                    print("[DB] Added post.author_id")
+
+                # post_series table
+                if 'post_series' not in all_tables:
+                    sql2 = ("CREATE TABLE post_series ("
+                            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                            "title VARCHAR(200) NOT NULL,"
+                            "slug VARCHAR(220) NOT NULL UNIQUE,"
+                            "description TEXT,"
+                            "created_at DATETIME)")
+                    conn.execute(text(sql2))
+                    print("[DB] Created post_series table")
+
+                # post_series_entry table
+                if 'post_series_entry' not in all_tables:
+                    sql3 = ("CREATE TABLE post_series_entry ("
+                            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                            "series_id INTEGER NOT NULL REFERENCES post_series(id),"
+                            "post_id INTEGER NOT NULL REFERENCES post(id),"
+                            "position INTEGER NOT NULL DEFAULT 1)")
+                    conn.execute(text(sql3))
+                    print("[DB] Created post_series_entry table")
+
+                # stamp at latest head
                 conn.execute(text("CREATE TABLE IF NOT EXISTS alembic_version (version_num VARCHAR(32) NOT NULL, CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num))"))
                 conn.execute(text("DELETE FROM alembic_version"))
-                conn.execute(text("INSERT INTO alembic_version (version_num) VALUES ('0f28bee38e6a')"))
+                conn.execute(text("INSERT INTO alembic_version (version_num) VALUES ('a1b2c3d4e5f6')"))
                 conn.commit()
-            print("[DB] Stamped migration head on existing schema.")
+            print("[DB] Schema patched and stamped at head.")
 
         else:
             # Normal case: db exists with migration history — just apply pending ones
             db_upgrade()
+            # Safety net: ensure new tables exist even if migration was already stamped
+            with db.engine.connect() as conn:
+                tables = set(inspector.get_table_names())
+                if 'author' not in tables:
+                    sql = ("CREATE TABLE IF NOT EXISTS author (id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                           "name VARCHAR(100) NOT NULL,slug VARCHAR(120) NOT NULL UNIQUE,"
+                           "bio TEXT,avatar VARCHAR(500),email VARCHAR(150),twitter VARCHAR(100))")
+                    conn.execute(text(sql))
+                    print("[DB] Created missing author table")
+                if 'post_series' not in tables:
+                    conn.execute(text("CREATE TABLE IF NOT EXISTS post_series (id INTEGER PRIMARY KEY AUTOINCREMENT,title VARCHAR(200) NOT NULL,slug VARCHAR(220) NOT NULL UNIQUE,description TEXT,created_at DATETIME)"))
+                    print("[DB] Created missing post_series table")
+                if 'post_series_entry' not in tables:
+                    conn.execute(text("CREATE TABLE IF NOT EXISTS post_series_entry (id INTEGER PRIMARY KEY AUTOINCREMENT,series_id INTEGER NOT NULL REFERENCES post_series(id),post_id INTEGER NOT NULL REFERENCES post(id),position INTEGER NOT NULL DEFAULT 1)"))
+                    print("[DB] Created missing post_series_entry table")
+                admin_cols = {col['name'] for col in inspector.get_columns('admin')}
+                if 'totp_secret' not in admin_cols:
+                    conn.execute(text("ALTER TABLE admin ADD COLUMN totp_secret VARCHAR(32)"))
+                    print("[DB] Added admin.totp_secret")
+                if 'totp_enabled' not in admin_cols:
+                    conn.execute(text("ALTER TABLE admin ADD COLUMN totp_enabled BOOLEAN NOT NULL DEFAULT 0"))
+                    print("[DB] Added admin.totp_enabled")
+                conn.commit()
 
         if not Admin.query.first():
             admin = Admin(
