@@ -9,9 +9,9 @@ class Config:
     """Base configuration"""
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
 
-    # Database
-    database_url = os.environ.get('DATABASE_URL')
-    if database_url and database_url.startswith("postgres://"):
+    # Database — supports Neon (sslmode=require&channel_binding=require), Render, and local SQLite
+    database_url = os.environ.get('DATABASE_URL', '')
+    if database_url.startswith("postgres://"):
         database_url = database_url.replace("postgres://", "postgresql://", 1)
     SQLALCHEMY_DATABASE_URI = database_url or 'sqlite:///innerpeacehub.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -50,6 +50,13 @@ class Config:
     CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
     CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
     CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
+
+    # Newsletter SMTP
+    SMTP_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
+    SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
+    SMTP_USER = os.environ.get('SMTP_USER', '')
+    SMTP_PASS = os.environ.get('SMTP_PASS', '')
+    SITE_URL  = os.environ.get('SITE_URL', 'https://innerpeacehub.onrender.com')
 
     # Session security
     SESSION_COOKIE_HTTPONLY = True
