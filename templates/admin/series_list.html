@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Post Series — InnerPeace Hub Admin{% endblock %}
+{% block content %}
+<section class="admin-dashboard">
+  <div class="container">
+    <div class="dashboard-header">
+      <div>
+        <h1>Post Series</h1>
+        <p>{{ series|length }} series</p>
+      </div>
+      <div class="dashboard-actions">
+        <a href="{{ url_for('admin.create_series') }}" class="btn-primary">
+          <i class="fas fa-plus"></i> New Series
+        </a>
+        <a href="{{ url_for('admin.admin_dashboard') }}" class="btn-secondary">
+          <i class="fas fa-arrow-left"></i> Dashboard
+        </a>
+      </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for msg in messages %}
+        <div class="flash-message">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    {% if series %}
+    <div class="dashboard-table-scroll">
+      <div class="table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Posts</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in series %}
+            <tr>
+              <td><strong>{{ s.title }}</strong></td>
+              <td>{{ s.entries|length }}</td>
+              <td>{{ (s.description or '')[:80] }}{% if s.description and s.description|length > 80 %}…{% endif %}</td>
+              <td class="table-actions">
+                <form method="POST" action="{{ url_for('admin.delete_series', series_id=s.id) }}"
+                      style="display:inline" onsubmit="return confirm('Delete series?')">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn-delete" title="Delete">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-book-open"></i>
+      <p>No series yet. Group related posts into a series.</p>
+      <a href="{{ url_for('admin.create_series') }}" class="btn-primary">Create Series</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
