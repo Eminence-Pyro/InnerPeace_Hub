@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}You're Offline — InnerPeace Hub{% endblock %}
+{% block content %}
+<section style="min-height:60vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:40px 20px;">
+  <div>
+    <div style="font-size:4rem; margin-bottom:20px;">🌿</div>
+    <h1 style="font-family:'Playfair Display',serif; color:#6B2D8B; margin-bottom:12px;">
+      You're offline
+    </h1>
+    <p style="color:#666; max-width:400px; margin:0 auto 28px; line-height:1.7;">
+      It looks like you've lost your connection. Take a breath — the posts will be here when you're back.
+    </p>
+    <button onclick="window.location.reload()"
+            style="background:#6B2D8B; color:#fff; border:none; border-radius:50px;
+                   padding:12px 28px; font-size:1rem; cursor:pointer; font-family:inherit;">
+      Try again
+    </button>
+    <div style="margin-top:20px;">
+      <a href="/" style="color:#D4A843; font-size:0.9rem;">← Back to home</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
