@@ -106,6 +106,9 @@ def create_app(config_class=config):
                 if 'approved' not in comment_cols:
                     conn.execute(text("ALTER TABLE comment ADD COLUMN approved BOOLEAN NOT NULL DEFAULT 0"))
                     print("[DB] Added comment.approved")
+                if 'is_admin' not in comment_cols:
+                    conn.execute(text("ALTER TABLE comment ADD COLUMN is_admin BOOLEAN NOT NULL DEFAULT 0"))
+                    print("[DB] Added comment.is_admin")
 
                 # admin columns
                 admin_cols = {col['name'] for col in inspector.get_columns('admin')}
