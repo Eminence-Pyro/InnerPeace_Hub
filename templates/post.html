@@ -20,9 +20,24 @@
 
     <!-- Meta -->
     <div class="post-meta">
+      {% if post.author %}
+      <span class="post-author">
+        {% if post.author.avatar %}
+        <img src="{{ post.author.avatar }}" alt="{{ post.author.name }}"
+             style="width:24px; height:24px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-right:4px;">
+        {% endif %}
+        By <strong>{{ post.author.name }}</strong>
+      </span> •
+      {% endif %}
       <span>{{ post.category }}</span> •
       <span>{{ post.read_time }}</span> •
       <span>{{ post.date_posted.strftime('%B %d, %Y') }}</span>
+      {% if series_data %}
+      <span class="series-badge">
+        <i class="fas fa-book-open"></i>
+        Part {{ series_data.position }} of {{ series_data.total }}: {{ series_data.series.title }}
+      </span>
+      {% endif %}
     </div>
 
     <!-- Featured Image -->
@@ -155,7 +170,39 @@
   </div>
 </section>
 
-<!-- Related Posts -->
+
+    {# ── Series prev/next nav (improvement 11) ─────────────────────────── #}
+    {% if series_data %}
+    <div class="series-nav">
+      <div class="series-nav-label">
+        <i class="fas fa-book-open"></i>
+        Part {{ series_data.position }} of {{ series_data.total }} in
+        <strong>{{ series_data.series.title }}</strong>
+      </div>
+      <div class="series-nav-links">
+        {% if series_data.prev %}
+        <a href="{{ url_for('blog.post', slug=series_data.prev.slug) }}" class="series-nav-prev">
+          <i class="fas fa-arrow-left"></i>
+          <span>
+            <small>Previous</small>
+            {{ series_data.prev.title[:50] }}{% if series_data.prev.title|length > 50 %}…{% endif %}
+          </span>
+        </a>
+        {% endif %}
+        {% if series_data.next %}
+        <a href="{{ url_for('blog.post', slug=series_data.next.slug) }}" class="series-nav-next">
+          <span>
+            <small>Next</small>
+            {{ series_data.next.title[:50] }}{% if series_data.next.title|length > 50 %}…{% endif %}
+          </span>
+          <i class="fas fa-arrow-right"></i>
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Related Posts -->
 {% if related %}
 <section class="related-section">
   <div class="container">
