@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Set Up Two-Factor Authentication — InnerPeace Hub Admin{% endblock %}
+{% block content %}
+<section class="admin-dashboard">
+  <div class="container" style="max-width:560px;">
+
+    <div class="dashboard-header">
+      <div>
+        <h1>Two-Factor Authentication</h1>
+        <p>Protect your admin account with an authenticator app.</p>
+      </div>
+      <a href="{{ url_for('admin.admin_dashboard') }}" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Dashboard
+      </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for msg in messages %}
+        <div class="flash-message">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    {% if admin.totp_enabled %}
+    <!-- Already enabled — show disable option -->
+    <div class="dashboard-section" style="text-align:center; padding:32px;">
+      <div style="font-size:3rem; margin-bottom:12px;">✅</div>
+      <h3 style="color:#6B2D8B;">2FA is Active</h3>
+      <p style="color:#888; margin-bottom:24px;">Your account is protected with Google Authenticator.</p>
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="disable">
+        <button type="submit" class="btn-delete"
+                onclick="return confirm('Disable 2FA? Your account will only be protected by your password.')">
+          <i class="fas fa-shield-alt"></i> Disable 2FA
+        </button>
+      </form>
+    </div>
+
+    {% else %}
+    <!-- Setup flow -->
+    <div class="dashboard-section">
+      <h3 style="margin-bottom:16px;">Step 1 — Scan QR Code</h3>
+      <p style="color:#666; margin-bottom:16px;">
+        Open <b>Google Authenticator</b> (or Authy) and scan this code:
+      </p>
+      <div style="text-align:center; margin-bottom:20px;">
+        <img src="data:image/png;base64,{{ qr_b64 }}" alt="QR Code"
+             style="width:200px; height:200px; border:8px solid #fff; border-radius:12px;
+                    box-shadow:0 4px 16px rgba(0,0,0,0.1);">
+      </div>
+      <p style="font-size:0.85rem; color:#999; text-align:center; margin-bottom:8px;">
+        Or enter this key manually:
+      </p>
+      <div style="font-family:monospace; background:#f9f5ff; border-radius:8px; padding:10px 16px;
+                  text-align:center; letter-spacing:0.15em; color:#6B2D8B; font-size:1rem;
+                  margin-bottom:28px; word-break:break-all;">
+        {{ secret }}
+      </div>
+
+      <h3 style="margin-bottom:12px;">Step 2 — Verify</h3>
+      <p style="color:#666; margin-bottom:16px;">Enter the 6-digit code from your app to confirm setup:</p>
+
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="action" value="enable">
+        <input type="hidden" name="secret" value="{{ secret }}">
+        <div class="form-group">
+          <input type="text" name="code" inputmode="numeric" pattern="[0-9]{6}"
+                 maxlength="6" autocomplete="one-time-code" required
+                 placeholder="Enter 6-digit code"
+                 style="font-size:1.4rem; letter-spacing:0.3em; text-align:center; font-family:monospace;">
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%; padding:14px;">
+          <i class="fas fa-shield-alt"></i> Enable 2FA
+        </button>
+      </form>
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+{% endblock %}
