@@ -21,9 +21,11 @@ class Author(db.Model):
 
 
 class Admin(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
+    id           = db.Column(db.Integer, primary_key=True)
+    username     = db.Column(db.String(80), unique=True, nullable=False)
+    password     = db.Column(db.String(200), nullable=False)
+    totp_secret  = db.Column(db.String(32), nullable=True)   # None = 2FA not configured
+    totp_enabled = db.Column(db.Boolean, default=False, nullable=False)
 
 
 class Post(db.Model):
