@@ -58,6 +58,8 @@ def create_post():
                 flash('Scheduled date required. Post saved as draft.')
                 status = 'draft'
         is_featured = request.form.get('is_featured') == 'on'
+        author_id_raw = request.form.get('author_id', '').strip()
+        author_id = int(author_id_raw) if author_id_raw else None
         tags = request.form.get('tags', '')
         image_file = request.files.get('image')
 
@@ -93,6 +95,7 @@ def create_post():
             scheduled_for=scheduled_for,
             is_featured=is_featured,
             tags=tags,
+            author_id=author_id,
             image=image_filename
         )
 
@@ -102,7 +105,9 @@ def create_post():
         flash(f"Post saved as {status}")
         return redirect(url_for('admin.admin_dashboard'))
 
-    return render_template('admin/create_post.html')
+    from models import Author
+    authors = Author.query.order_by(Author.name).all()
+    return render_template('admin/create_post.html', authors=authors)
 
 
 @admin_bp.route('/upload', methods=['POST'])
@@ -179,7 +184,9 @@ def edit_post(post_id):
             post.status = new_status
             post.scheduled_for = None
         post.is_featured = request.form.get('is_featured') == 'on'
-        post.tags     = request.form.get('tags', '')
+        post.tags      = request.form.get('tags', '')
+        author_id_raw  = request.form.get('author_id', '').strip()
+        post.author_id = int(author_id_raw) if author_id_raw else None
 
         image_file = request.files.get('image')
         if image_file and image_file.filename and allowed_file(image_file.filename):
@@ -194,7 +201,9 @@ def edit_post(post_id):
         flash(f"Post updated and saved as {post.status}")
         return redirect(url_for('admin.admin_dashboard'))
 
-    return render_template('admin/create_post.html', post=post)
+    from models import Author
+    authors = Author.query.order_by(Author.name).all()
+    return render_template('admin/create_post.html', post=post, authors=authors)
 
 
 @admin_bp.route('/admin/post/delete/<int:post_id>', methods=['POST'])
