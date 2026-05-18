@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Create Series — InnerPeace Hub Admin{% endblock %}
+{% block content %}
+<section class="admin-create">
+  <div class="container">
+    <div class="create-header">
+      <h1>Create Post Series</h1>
+      <a href="{{ url_for('admin.series_list') }}" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+      </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for msg in messages %}
+        <div class="alert-error">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    <form method="POST" class="create-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label for="title">Series Title *</label>
+        <input type="text" id="title" name="title" required placeholder="e.g. Healing Journey — 4-Part Series">
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description <small>(optional)</small></label>
+        <textarea id="description" name="description" rows="2"
+                  placeholder="What is this series about?" style="width:100%; resize:vertical;"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Select &amp; Order Posts</label>
+        <small style="color:#999; display:block; margin-bottom:10px;">
+          Check posts and drag to reorder them (Part 1 at top).
+        </small>
+        <div id="post-order-list" style="display:flex; flex-direction:column; gap:8px;">
+          {% for post in posts %}
+          <label style="display:flex; align-items:center; gap:10px; background:var(--card-bg,#fff);
+                        border:1px solid var(--border,#e8e0f0); border-radius:8px; padding:10px 14px; cursor:pointer;">
+            <input type="checkbox" name="post_ids" value="{{ post.id }}">
+            <span style="flex:1;">{{ post.title }}</span>
+            <span class="card-tag">{{ post.category }}</span>
+            <span style="color:#999; font-size:0.8rem;">{{ post.date_posted.strftime('%b %Y') }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <button type="submit" class="btn-primary">
+          <i class="fas fa-book-open"></i> Create Series
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
