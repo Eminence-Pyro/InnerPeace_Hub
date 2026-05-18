@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Add Author — InnerPeace Hub Admin{% endblock %}
+{% block content %}
+<section class="admin-create">
+  <div class="container">
+    <div class="create-header">
+      <h1>Add Guest Author</h1>
+      <a href="{{ url_for('admin.author_list') }}" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+      </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for msg in messages %}
+        <div class="alert-error">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data" class="create-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label for="name">Full Name *</label>
+        <input type="text" id="name" name="name" required placeholder="e.g. Amara Okafor">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email <small>(private)</small></label>
+          <input type="email" id="email" name="email" placeholder="author@example.com">
+        </div>
+        <div class="form-group">
+          <label for="twitter">Twitter / X Handle <small>(without @)</small></label>
+          <input type="text" id="twitter" name="twitter" placeholder="handle">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="bio">Short Bio</label>
+        <textarea id="bio" name="bio" rows="3" placeholder="A few lines about this author…" style="width:100%; resize:vertical;"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="avatar">Profile Photo</label>
+        <input type="file" id="avatar" name="avatar" accept="image/*">
+        <small style="color:#999;">Uploaded to Cloudinary. Recommended: 400×400px square.</small>
+      </div>
+
+      <div style="margin-top:24px;">
+        <button type="submit" class="btn-primary">
+          <i class="fas fa-user-plus"></i> Create Author
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
