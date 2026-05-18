@@ -1,56 +1,79 @@
 # InnerPeace Hub — Improvements Tracker
 
-## ✅ Completed This Session
+## ✅ Completed — Batch 1 (Improvements 1–4)
 
 ### 1. View Counter
-- `Post.view_count` column added to database model
-- Increments on every public post visit (admin previews excluded)
-- Displayed in admin dashboard posts table with eye icon
-- Requires DB migration (see below)
+- `Post.view_count` column — increments on every public post visit
+- Shown in admin dashboard posts table
 
 ### 2. Newsletter Digest
-- Subscribers page now shows active count + "Send Digest" button
-- One-click sends latest 3 posts to all active subscribers via SMTP email
-- Beautiful HTML email template matching brand colours
+- One-click send to all active subscribers from Subscribers page
+- HTML email with latest 3 posts, matching brand colours
 - Admin can activate/deactivate individual subscribers
-- **Setup required:** Add `SMTP_USER`, `SMTP_PASS`, `SITE_URL` to `.env` (see README)
+- **Requires:** `SMTP_USER`, `SMTP_PASS`, `SITE_URL` in `.env`
 
-### 3. Comment Moderation
-- New comments go to a pending queue (not visible publicly until approved)
-- Admin sees pending count in dashboard stats card (turns amber if > 0)
-- `/admin/comments` moderation page: approve or delete each comment
-- "Comments" button added to dashboard header with live badge count
-- Flash message on submission: "Your comment is awaiting moderation"
+### 3. Comment Moderation Queue
+- New comments held pending until admin approves
+- `/admin/comments` page: approve or delete each comment
+- Dashboard shows live pending count (turns amber when > 0)
 
 ### 4. Post Scheduling
-- New "Scheduled" status option in create/edit post form
-- Date-time picker appears when "Scheduled" is selected
-- Post auto-publishes when scheduled time passes (checked on every page load)
-- Dashboard shows "scheduled" badge in status column
-- Requires DB migration (see below)
+- "Scheduled" status + datetime picker in create/edit post form
+- Auto-publishes when scheduled time passes (checked on every request)
 
 ---
 
-## ⚠️ Required: Run DB Migrations Locally
+## ✅ Completed — Batch 2 (Improvements 5–9)
 
-After pulling, run these commands to apply the new columns:
+### 5. Dedicated Search Page (`/search`)
+- Full-text search across title, excerpt, tags, category, and content
+- Query term highlighted in yellow in results (title + excerpt)
+- Card layout with thumbnail, category tag, date, excerpt
+- Search bar with autofocus, accessible, dark mode compatible
 
-```bash
-git pull
-flask db migrate -m "Add view_count, scheduled_for to Post; add approved to Comment"
-flask db upgrade
-```
+### 6. Related Posts (Tag Similarity)
+- Scores candidate posts by shared tags — most shared tags = top result
+- Falls back to same-category if no tag overlap
+- Shows up to 3 related posts (previously 2)
 
-Then restart your server:
-```bash
-python app.py
-```
+### 7. Per-Post Open Graph + Twitter Card Images
+- `post.html` now overrides `og:image` and `twitter:image` with the post's own featured image
+- Falls back to site logo if no post image
+- Also sets `og:type=article`, `og:description`, `twitter:card=summary_large_image`
+- When you share a post link on WhatsApp, Instagram, Twitter — the correct thumbnail now shows
+
+### 8. RSS Feed (`/rss.xml`)
+- Auto-generated RSS 2.0 feed of latest 20 published posts
+- RSS autodiscovery `<link>` in `<head>` so feed readers detect it automatically
+- RSS icon added to footer social links
+
+### 9. Sitemap (`/sitemap.xml`)
+- Auto-generated XML sitemap with all published post URLs
+- Includes static pages (/, /blog, /podcast, /about, /contact, /search)
+- Priority and changefreq set per page type
+- Sitemap link in footer
+- Submit URL to Google Search Console: `https://yoursite.com/sitemap.xml`
 
 ---
 
-## ⚠️ Required: Configure SMTP for Newsletter
+## 🗄️ Database — Migrated to Neon
 
-Add to your `.env` file:
+- Render DB expires June 3 — migration to Neon complete ✅
+- Both databases verified identical (all tables, all rows, alembic version matched)
+- **Action required:** Update `DATABASE_URL` env var on Render dashboard to:
+  ```
+  postgresql://neondb_owner:npg_UomfCu6pq5RI@ep-empty-base-aqc2hk3i-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+  ```
+
+---
+
+## ⚠️ Action Items
+
+### 1. Update DATABASE_URL on Render
+In Render dashboard → your web service → Environment → update `DATABASE_URL` to the Neon connection string above.
+
+### 2. Configure SMTP (for newsletter)
+Add to `.env` and Render environment:
 ```
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
@@ -58,23 +81,19 @@ SMTP_USER=your-gmail@gmail.com
 SMTP_PASS=your-gmail-app-password
 SITE_URL=https://innerpeacehub.onrender.com
 ```
+Use a Gmail **App Password** (Google Account → Security → 2-Step Verification → App Passwords).
 
-> For Gmail: use an **App Password** (Google Account → Security → 2-Step Verification → App Passwords), not your regular password.
+### 3. Submit sitemap to Google Search Console
+Once deployed: go to [Google Search Console](https://search.google.com/search-console), add your property, then submit `https://innerpeacehub.onrender.com/sitemap.xml`.
 
 ---
 
-## 📋 Remaining Improvements (from README)
+## 📋 Remaining Improvements (10–14)
 
-### Medium Priority
-5. **Search Page** — dedicated `/search` with highlighted matches
-6. **Related Posts (AI)** — text similarity on tags/category
-7. **Social Sharing OG Image** — per-post Open Graph image
-8. **RSS Feed** — `/rss.xml` for blog/podcast apps
-9. **Sitemap** — auto-generate `/sitemap.xml` on publish
-
-### Nice to Have
-10. **Multi-author** — guest blogger credits per post
-11. **Post Series** — group posts with prev/next navigation
-12. **PWA / Offline** — service worker for poor connections
-13. **Sentry** — real-time error tracking (free tier)
-14. **2FA** — TOTP admin login security
+| # | Feature | Notes |
+|---|---------|-------|
+| 10 | Multi-author / guest bloggers | Add `Author` model, credit on posts |
+| 11 | Post series (Part 1, 2, 3) | Group posts, prev/next navigation |
+| 12 | PWA / offline caching | Service worker for poor connections |
+| 13 | Sentry error monitoring | Free tier, real-time crash reports |
+| 14 | 2FA admin login | TOTP — Google Authenticator compatible |
