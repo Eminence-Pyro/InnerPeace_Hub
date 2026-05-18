@@ -51,9 +51,15 @@ def create_app(config_class=config):
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
 
-    # Initialize database and seed default admin
+    # Initialize database — run all pending migrations then seed admin
     with app.app_context():
-        db.create_all()
+        from flask_migrate import upgrade as db_upgrade
+        try:
+            db_upgrade()          # applies any pending Alembic migrations
+        except Exception as migrate_err:
+            # Fallback: if migrations directory not configured, create tables directly
+            print(f"[WARN] migrate upgrade failed ({migrate_err}), falling back to db.create_all()")
+            db.create_all()
 
         if not Admin.query.first():
             admin = Admin(
