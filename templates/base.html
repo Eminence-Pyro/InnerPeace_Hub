@@ -20,6 +20,10 @@
 
   <!-- RSS Autodiscovery -->
   <link rel="alternate" type="application/rss+xml" title="InnerPeace Hub Blog" href="/rss.xml">
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="InnerPeace Hub">
 
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
@@ -178,5 +182,16 @@
     })();
   </script>
 
+
+  <script>
+    // ── PWA Service Worker Registration (Improvement 12) ─────────────────────
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js', { scope: '/' })
+          .then(reg => console.log('[SW] Registered:', reg.scope))
+          .catch(err => console.warn('[SW] Registration failed:', err));
+      });
+    }
+  </script>
 </body>
 </html>
