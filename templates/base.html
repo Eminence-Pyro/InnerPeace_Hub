@@ -3,14 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="description" content="{{ post.excerpt if post else 'InnerPeace Hub - A blog about relationships, healing, faith, and personal growth' }}">
+  <meta name="description" content="{% block meta_description %}InnerPeace Hub — Healing, faith, and personal growth{% endblock %}">
   <meta name="keywords" content="relationships, healing, faith, self-discovery, intentional living, podcast, blog">
-  <meta property="og:title" content="{% block title %}InnerPeace Hub{% endblock %}">
-  <meta property="og:description" content="{{ post.excerpt if post else 'InnerPeace Hub - A blog about relationships, healing, faith, and personal growth' }}">
-  <meta property="og:image" content="{{ url_for('static', filename='images/' + (post.image if post and post.image else 'innerpeacelogo.png')) }}">
+  <meta property="og:title" content="{% block og_title %}InnerPeace Hub{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}InnerPeace Hub — A blog about relationships, healing, faith, and personal growth{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/innerpeacelogo.png', _external=True) }}{% endblock %}">
   <meta property="og:url" content="{{ request.url }}">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:site_name" content="InnerPeace Hub">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{% block tw_title %}InnerPeace Hub{% endblock %}">
+  <meta name="twitter:description" content="{% block tw_description %}InnerPeace Hub — Healing, faith, and personal growth{% endblock %}">
+  <meta name="twitter:image" content="{% block tw_image %}{{ url_for('static', filename='images/innerpeacelogo.png', _external=True) }}{% endblock %}">
   <meta name="theme-color" content="#6B2D8B">
   <meta name="color-scheme" content="light dark">
+
+  <!-- RSS Autodiscovery -->
+  <link rel="alternate" type="application/rss+xml" title="InnerPeace Hub Blog" href="/rss.xml">
 
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
