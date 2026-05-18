@@ -42,3 +42,11 @@ python-slugify==8.0.4
 charset-normalizer==3.4.2
 urllib3==2.7.0
 idna==3.10
+
+# Error Monitoring (Improvement 13)
+sentry-sdk[flask]==2.25.1
+
+# Two-Factor Authentication (Improvement 14)
+pyotp==2.9.0
+qrcode[pil]==8.1
+Pillow==11.2.1
