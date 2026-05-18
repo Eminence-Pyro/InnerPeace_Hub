@@ -9,6 +9,24 @@ import cloudinary
 
 from config import ProductionConfig, DevelopmentConfig
 
+# ── Improvement 13: Sentry error monitoring ───────────────────────────────────
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
+if SENTRY_DSN:
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.flask import FlaskIntegration
+        from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
+        sentry_sdk.init(
+            dsn=SENTRY_DSN,
+            integrations=[FlaskIntegration(), SqlalchemyIntegration()],
+            traces_sample_rate=0.1,   # 10% of requests traced for performance
+            send_default_pii=False,   # never send passwords or personal data
+            environment=os.environ.get('FLASK_ENV', 'development'),
+        )
+        print('[Sentry] Initialized.')
+    except ImportError:
+        print('[Sentry] sentry-sdk not installed. Run: pip install sentry-sdk')
+
 config = ProductionConfig if os.environ.get('FLASK_ENV') == 'production' else DevelopmentConfig
 
 from models import db, Admin
