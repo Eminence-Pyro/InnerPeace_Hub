@@ -150,3 +150,34 @@ def admin_logout():
     logout_user()
     flash('You have been logged out', 'success')
     return redirect(url_for('auth.admin_login'))
+
+@auth_bp.route('/admin/change-username', methods=['GET', 'POST'])
+@login_required
+def change_username():
+    if request.method == 'POST':
+        new_username = request.form.get('new_username', '').strip()
+        password     = request.form.get('password', '')
+
+        if not new_username or not password:
+            flash('All fields are required.', 'error')
+            return render_template('admin/change_username.html')
+
+        if not check_password_hash(current_user.password, password):
+            flash('Current password is incorrect.', 'error')
+            return render_template('admin/change_username.html')
+
+        if len(new_username) < 3:
+            flash('Username must be at least 3 characters.', 'error')
+            return render_template('admin/change_username.html')
+
+        existing = Admin.query.filter_by(username=new_username).first()
+        if existing and existing.id != current_user.id:
+            flash('That username is already taken.', 'error')
+            return render_template('admin/change_username.html')
+
+        current_user.username = new_username
+        db.session.commit()
+        flash('Username updated successfully!', 'success')
+        return redirect(url_for('admin.admin_dashboard'))
+
+    return render_template('admin/change_username.html')
