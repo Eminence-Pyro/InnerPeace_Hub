@@ -122,7 +122,7 @@ def create_app(config_class=config):
                 # author table
                 if 'author' not in all_tables:
                     sql = ("CREATE TABLE author ("
-                           "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                           "id SERIAL PRIMARY KEY,"
                            "name VARCHAR(100) NOT NULL,"
                            "slug VARCHAR(120) NOT NULL UNIQUE,"
                            "bio TEXT,"
@@ -141,7 +141,7 @@ def create_app(config_class=config):
                 # post_series table
                 if 'post_series' not in all_tables:
                     sql2 = ("CREATE TABLE post_series ("
-                            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                            "id SERIAL PRIMARY KEY,"
                             "title VARCHAR(200) NOT NULL,"
                             "slug VARCHAR(220) NOT NULL UNIQUE,"
                             "description TEXT,"
@@ -152,7 +152,7 @@ def create_app(config_class=config):
                 # post_series_entry table
                 if 'post_series_entry' not in all_tables:
                     sql3 = ("CREATE TABLE post_series_entry ("
-                            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                            "id SERIAL PRIMARY KEY,"
                             "series_id INTEGER NOT NULL REFERENCES post_series(id),"
                             "post_id INTEGER NOT NULL REFERENCES post(id),"
                             "position INTEGER NOT NULL DEFAULT 1)")
@@ -173,16 +173,16 @@ def create_app(config_class=config):
             with db.engine.connect() as conn:
                 tables = set(inspector.get_table_names())
                 if 'author' not in tables:
-                    sql = ("CREATE TABLE IF NOT EXISTS author (id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    sql = ("CREATE TABLE IF NOT EXISTS author (id SERIAL PRIMARY KEY,"
                            "name VARCHAR(100) NOT NULL,slug VARCHAR(120) NOT NULL UNIQUE,"
                            "bio TEXT,avatar VARCHAR(500),email VARCHAR(150),twitter VARCHAR(100))")
                     conn.execute(text(sql))
                     print("[DB] Created missing author table")
                 if 'post_series' not in tables:
-                    conn.execute(text("CREATE TABLE IF NOT EXISTS post_series (id INTEGER PRIMARY KEY AUTOINCREMENT,title VARCHAR(200) NOT NULL,slug VARCHAR(220) NOT NULL UNIQUE,description TEXT,created_at DATETIME)"))
+                    conn.execute(text("CREATE TABLE IF NOT EXISTS post_series (id SERIAL PRIMARY KEY,title VARCHAR(200) NOT NULL,slug VARCHAR(220) NOT NULL UNIQUE,description TEXT,created_at DATETIME)"))
                     print("[DB] Created missing post_series table")
                 if 'post_series_entry' not in tables:
-                    conn.execute(text("CREATE TABLE IF NOT EXISTS post_series_entry (id INTEGER PRIMARY KEY AUTOINCREMENT,series_id INTEGER NOT NULL REFERENCES post_series(id),post_id INTEGER NOT NULL REFERENCES post(id),position INTEGER NOT NULL DEFAULT 1)"))
+                    conn.execute(text("CREATE TABLE IF NOT EXISTS post_series_entry (id SERIAL PRIMARY KEY,series_id INTEGER NOT NULL REFERENCES post_series(id),post_id INTEGER NOT NULL REFERENCES post(id),position INTEGER NOT NULL DEFAULT 1)"))
                     print("[DB] Created missing post_series_entry table")
                 admin_cols = {col['name'] for col in inspector.get_columns('admin')}
                 if 'totp_secret' not in admin_cols:
