@@ -85,6 +85,7 @@ def create_app(config_class=config):
             # Tables exist (created by old db.create_all) but no migration history.
             # Add missing columns manually then stamp as up-to-date so migrate doesn't re-run.
             with db.engine.connect() as conn:
+                # ── post table ───────────────────────────────────────────────
                 col_map = {col['name'] for col in inspector.get_columns('post')}
                 if 'view_count' not in col_map:
                     conn.execute(text("ALTER TABLE post ADD COLUMN view_count INTEGER NOT NULL DEFAULT 0"))
@@ -92,11 +93,32 @@ def create_app(config_class=config):
                 if 'scheduled_for' not in col_map:
                     conn.execute(text("ALTER TABLE post ADD COLUMN scheduled_for DATETIME"))
                     print("[DB] Added post.scheduled_for")
+                if 'is_featured' not in col_map:
+                    conn.execute(text("ALTER TABLE post ADD COLUMN is_featured BOOLEAN NOT NULL DEFAULT 0"))
+                    print("[DB] Added post.is_featured")
+                if 'tags' not in col_map:
+                    conn.execute(text("ALTER TABLE post ADD COLUMN tags VARCHAR(300)"))
+                    print("[DB] Added post.tags")
+                if 'author_id' not in col_map:
+                    conn.execute(text("ALTER TABLE post ADD COLUMN author_id INTEGER REFERENCES author(id)"))
+                    print("[DB] Added post.author_id")
+
+                # ── comment table ─────────────────────────────────────────────
                 comment_cols = {col['name'] for col in inspector.get_columns('comment')}
                 if 'approved' not in comment_cols:
                     conn.execute(text("ALTER TABLE comment ADD COLUMN approved BOOLEAN NOT NULL DEFAULT 0"))
                     print("[DB] Added comment.approved")
-                # Create alembic_version table and stamp latest revision directly via SQL
+
+                # ── admin table ───────────────────────────────────────────────
+                admin_cols = {col['name'] for col in inspector.get_columns('admin')}
+                if 'totp_secret' not in admin_cols:
+                    conn.execute(text("ALTER TABLE admin ADD COLUMN totp_secret VARCHAR(32)"))
+                    print("[DB] Added admin.totp_secret")
+                if 'totp_enabled' not in admin_cols:
+                    conn.execute(text("ALTER TABLE admin ADD COLUMN totp_enabled BOOLEAN NOT NULL DEFAULT 0"))
+                    print("[DB] Added admin.totp_enabled")
+
+                # ── stamp alembic_version ─────────────────────────────────────
                 conn.execute(text("CREATE TABLE IF NOT EXISTS alembic_version (version_num VARCHAR(32) NOT NULL, CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num))"))
                 conn.execute(text("DELETE FROM alembic_version"))
                 conn.execute(text("INSERT INTO alembic_version (version_num) VALUES ('0f28bee38e6a')"))
