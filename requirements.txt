@@ -10,6 +10,7 @@ click==8.3.3
 itsdangerous==2.2.0
 
 # Database & ORM
+bleach==6.3.0
 Flask-SQLAlchemy==3.1.1
 Flask-Migrate==4.1.0
 SQLAlchemy==2.0.49
