@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Change Username — InnerPeace Hub Admin{% endblock %}
+{% block content %}
+<section class="admin-create">
+  <div class="container" style="max-width:500px;">
+    <div class="create-header">
+      <h1>Change Username</h1>
+      <a href="{{ url_for('admin.admin_dashboard') }}" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i> Dashboard
+      </a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for msg in messages %}
+        <div class="alert-error">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    <form method="POST" class="create-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-group">
+        <label for="new_username">New Username</label>
+        <input type="text" id="new_username" name="new_username" required
+               minlength="3" placeholder="Enter new username"
+               value="{{ current_user.username }}">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Current Password <small>(to confirm it's you)</small></label>
+        <input type="password" id="password" name="password" required
+               placeholder="Enter your current password">
+      </div>
+
+      <div style="margin-top:24px;">
+        <button type="submit" class="btn-primary">
+          <i class="fas fa-save"></i> Update Username
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
