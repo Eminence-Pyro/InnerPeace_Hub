@@ -4,7 +4,7 @@ import cloudinary
 import cloudinary.uploader
 from flask_login import login_required
 from slugify import slugify
-from models import Subscriber, Post, Message, PodcastEpisode, db
+from models import Subscriber, Post, Message, PodcastEpisode, Comment, db
 from utils import allowed_file, generate_slug
 
 admin_bp = Blueprint('admin', __name__)
@@ -625,3 +625,23 @@ def delete_series(series_id):
     db.session.commit()
     flash(f'Series "{series.title}" deleted.')
     return redirect(url_for('admin.series_list'))
+
+# ── Admin reply to a comment ──────────────────────────────────────────────────
+@admin_bp.route('/admin/post/<slug>/reply', methods=['POST'])
+@login_required
+def admin_reply(slug):
+    post = Post.query.filter_by(slug=slug).first_or_404()
+    body = request.form.get('body', '').strip()
+    if body:
+        reply = Comment(
+            post_id  = post.id,
+            name     = 'Ezinne (Author)',
+            email    = '',
+            body     = body,
+            approved = True,   # admin replies go live immediately
+            is_admin = True
+        )
+        db.session.add(reply)
+        db.session.commit()
+        flash('Your reply has been posted.')
+    return redirect(url_for('blog.post', slug=slug) + '#comments')
