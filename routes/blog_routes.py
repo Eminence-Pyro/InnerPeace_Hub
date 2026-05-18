@@ -302,3 +302,8 @@ def sitemap():
         '</urlset>'
     )
     return Response(xml, mimetype='application/xml')
+
+# ── Improvement 12: PWA offline fallback page ────────────────────────────────
+@blog_bp.route('/offline')
+def offline():
+    return render_template('offline.html')
