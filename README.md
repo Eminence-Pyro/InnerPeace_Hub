@@ -1,322 +1,267 @@
 # InnerPeace Hub — Blog & Content Platform
 
-A professional, full-featured blog website for **InnerPeace Hub** by Ezinne Uduma, focusing on relationships, healing, faith-based living, and personal growth.
+> A professional, full-featured blog and podcast platform by **Ezinne Uduma**, focused on relationships, healing, faith-based living, and personal growth.
+
+[![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python)](https://python.org)
+[![Flask](https://img.shields.io/badge/Flask-3.1-lightgrey?logo=flask)](https://flask.palletsprojects.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
+[![Deployed on Render](https://img.shields.io/badge/Deployed%20on-Render-46E3B7?logo=render)](https://innerpeacehub.onrender.com)
 
 ---
 
-## 🌟 Features
+## ✨ Features
 
 ### Content Management
-- ✅ **Draft/Published Workflow** — Write and save drafts before going live
-- ✅ **Featured Posts** — Pin important posts to the homepage
-- ✅ **Categories & Tags** — Organize content with categories and searchable tags
-- ✅ **Rich Text Editor** — CKEditor integration for professional formatting
-- ✅ **Cloud Image Upload** — Cloudinary integration for reliable image hosting
-- ✅ **Podcast Upload System** — Upload audio directly to Cloudinary from the browser (supports 100MB+); admin manages episodes with title, description, Spotify embed, cover image, and duration
-- ✅ **Search Functionality** — Search posts by title, excerpt, tags, and categories
-- ✅ **Pagination** — Blog posts paginated (6 per page)
+- **Draft / Published / Scheduled workflow** — Write drafts, schedule posts for future publishing
+- **Post Scheduling** — Set a date/time; posts auto-publish when the time arrives
+- **Featured Posts** — Pin important posts to the homepage
+- **Categories & Tags** — Organise content with categories and comma-separated tags
+- **Rich Text Editor** — CKEditor with image upload support
+- **Cloud Image Upload** — Cloudinary for reliable, CDN-backed image hosting
+- **Reading Progress Bar** — Visual scroll indicator on post pages
+- **View Counter** — Tracks how many times each post has been viewed
+
+### Guest Authors & Series (New)
+- **Multi-Author / Guest Bloggers** — Create author profiles with bio, avatar, Twitter handle; credit guest contributors per post
+- **Post Series** — Group related posts into named series (Part 1, 2, 3…); readers get prev/next navigation between parts
+
+### Podcast
+- **Audio Upload** — Upload episodes directly via browser (100MB+ supported); files hosted on Cloudinary
+- **Custom Audio Player** — Accessible, styled HTML5 player on every episode page
+- **Spotify Embed** — Optional Spotify embed alongside the hosted audio
+- **Episode Management** — Draft/Published status, cover images, descriptions
+
+### Discovery & SEO
+- **Dedicated Search** (`/search`) — Full-text search across title, excerpt, tags, category, and body with result highlighting
+- **RSS Feed** (`/rss.xml`) — Auto-generated RSS 2.0 feed; autodiscovered by feed readers
+- **Sitemap** (`/sitemap.xml`) — Auto-generated XML sitemap for Google Search Console
+- **Open Graph + Twitter Cards** — Each post shares its own featured image and description on social media
+
+### Reader Interaction
+- **Self-Hosted Comments** — Comment moderation queue; admin approves before public display
+- **Emoji Reactions** — Like, love, inspire — stored in localStorage, no database needed
+- **Newsletter Signup** — Subscribers stored in DB; admin sends HTML digest emails with one click
 
 ### Admin Dashboard
-- 📊 **Analytics Overview** — Published/draft post counts and unread messages
-- 📝 **Post Management** — Create, edit, delete posts with status control
-- 🎙️ **Podcast Management** — Add, edit, delete podcast episodes
-- 💬 **Message Management** — View and manage contact form submissions
-- 🔐 **Authentication** — Secure admin login with password strength validation
-- 🛡️ **CSRF Protection** — Web form security on all forms
+- **Full CRUD** — Posts, subscribers, messages, podcast episodes, authors, series
+- **Comment Moderation** — Approve / reject incoming comments
+- **Author Management** — Add and remove guest contributors
+- **Series Management** — Create and organise multi-part post series
+- **Image Upload via CKEditor** — Inline Cloudinary uploads in the editor
 
-### User Experience
-- 📱 **Fully Responsive** — Mobile, tablet, and desktop optimized (including admin panel)
-- 🌙 **Dark Mode** — Floating toggle button; preference saved across sessions via `localStorage`
-- 🎠 **Responsive Carousel** — Homepage post slider works on all screen sizes (1/2/3 cards)
-- 🔝 **Scroll to Top** — Floating button, fades in after 300px scroll
-- ❤️ **Post Reactions** — 5-emoji reaction system per post (stored in `localStorage`)
-- 💬 **Native Comments** — Self-hosted comment system (no Disqus dependency)
-- ⚡ **Performance** — Optimized images via Cloudinary, lazy loading
-- 🔍 **SEO** — Meta tags, Open Graph, slug-based URLs
-- 📊 **Reading Progress** — Progress bar while scrolling through posts
-- ♿ **Accessible** — Semantic HTML and ARIA labels throughout
+### Security
+- **Two-Factor Authentication (TOTP)** — Google Authenticator / Authy compatible; setup and toggle from dashboard
+- **CSRF Protection** — Flask-WTF covers all forms including CKEditor uploads
+- **Env-based secrets** — No hardcoded credentials; all sensitive values live in `.env`
+- **Session security** — HttpOnly + SameSite cookies; Secure flag in production
+- **Custom error pages** — Branded 404 and 500 pages
 
-### Pages
-- **Home** — Hero, featured podcast episode, and latest articles carousel
-- **Blog** — Full listing with pagination, categories, and search
-- **Post Detail** — Full post with reactions, comments, sharing, and related articles
-- **About** — Founder story and mission
-- **Podcast** — Episodes from database with native audio player + Spotify embed
-- **Contact** — Contact form with message storage
-- **Admin** — Full CMS (posts, podcast, messages)
+### Performance & PWA
+- **Progressive Web App** — Installable on mobile ("Add to Home Screen"); offline-capable via service worker
+- **Offline Page** — Custom branded fallback when connection drops
+- **Cache-first static assets** — Service worker caches CSS/JS for instant repeat loads
+
+### Monitoring
+- **Sentry** — Real-time error monitoring (plug in your `SENTRY_DSN` to activate)
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠 Tech Stack
 
-### Backend
-- **Framework:** Flask (Python 3.13)
-- **Database:** PostgreSQL via Neon (prod) / SQLite (local dev)
-- **ORM:** SQLAlchemy + Flask-Migrate
-- **Authentication:** Flask-Login
-- **Security:** Werkzeug (password hashing), Flask-WTF (CSRF)
-- **Media:** Cloudinary (images + podcast audio)
-
-### Frontend
-- **HTML5** — Semantic markup
-- **CSS3** — Single stylesheet with CSS variables (supports dark mode)
-- **JavaScript** — Vanilla JS, no frameworks
-- **Rich Text:** Flask-CKEditor
-- **Icons:** Font Awesome 6.5
-
-### Hosting & Services
-- **App Hosting:** Render (or Heroku)
-- **Database:** Neon (free, never-expiring serverless Postgres)
-- **Media:** Cloudinary
-- **Web Server:** Gunicorn
+| Layer | Technology |
+|---|---|
+| Backend | Python 3.11, Flask 3.1 |
+| Database | PostgreSQL (Neon — production), SQLite (local dev) |
+| ORM & Migrations | Flask-SQLAlchemy 3.1, Flask-Migrate (Alembic) |
+| Auth | Flask-Login, Flask-WTF (CSRF), pyotp (2FA) |
+| Rich Text | Flask-CKEditor |
+| File Storage | Cloudinary (images + audio) |
+| Email | SMTP via Gmail App Password |
+| Error Monitoring | Sentry SDK |
+| Deployment | Render (web service + Gunicorn) |
+| Frontend | Vanilla JS, CSS custom properties (dark mode) |
+| PWA | Service Worker, Web App Manifest |
 
 ---
 
-## 📁 Project Structure
+## 🚀 Local Setup
 
-```
-InnerPeace_Hub/
-├── app.py                    # Application factory & entry point
-├── config.py                 # Environment-based configuration
-├── requirements.txt          # Python dependencies
-├── Procfile                  # Render/Heroku deployment
-│
-├── models/
-│   └── __init__.py           # DB models: Admin, Post, Comment, Message, Subscriber, PodcastEpisode
-│
-├── routes/
-│   ├── blog_routes.py        # Public pages + comment submission
-│   ├── auth_routes.py        # Admin login/logout
-│   └── admin_routes.py       # Admin dashboard, post CRUD, podcast CRUD, CKEditor upload
-│
-├── utils/
-│   ├── __init__.py
-│   └── helpers.py            # allowed_file(), generate_slug(), validate_password_strength()
-│
-├── static/
-│   ├── css/styles.css        # Full stylesheet (dark mode vars, responsive, admin, podcast)
-│   ├── js/script.js          # Carousel, scroll-to-top, reactions, hamburger, progress bar
-│   └── images/               # Favicons, logo, brand assets
-│
-├── templates/
-│   ├── base.html             # Base layout (FAB cluster: dark mode + scroll-to-top)
-│   ├── index.html            # Home page
-│   ├── blog.html             # Blog listing
-│   ├── post.html             # Post detail (reactions + native comments)
-│   ├── about.html
-│   ├── podcast.html          # Podcast page (DB-driven episodes)
-│   ├── contact.html
-│   ├── errors/               # Custom 404 & 500 pages
-│   └── admin/
-│       ├── login.html
-│       ├── dashboard.html
-│       ├── create_post.html  # CKEditor post editor
-│       ├── podcast_list.html
-│       └── create_episode.html  # Podcast episode form + direct Cloudinary upload
-│
-└── migrations/               # Flask-Migrate migration history
-```
-
----
-
-## 🚀 Quick Start
-
-### Local Development
-
-1. **Clone & Setup**
+### 1. Clone & create virtualenv
 ```bash
 git clone https://github.com/Eminence-Pyro/InnerPeace_Hub.git
 cd InnerPeace_Hub
-python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+python -m venv venv
+source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-2. **Environment Variables**
-Create a `.env` file:
+### 2. Configure environment variables
+```bash
+cp .env.example .env
 ```
-SECRET_KEY=your-secret-key
-DATABASE_URL=postgresql://user:password@localhost/innerpeacehub
+
+Edit `.env` with your values:
+
+```env
+SECRET_KEY=your-random-secret-key
+ADMIN_PASSWORD=your-admin-password
+DATABASE_URL=                        # leave blank to use local SQLite
 CLOUDINARY_CLOUD_NAME=your-cloud-name
 CLOUDINARY_API_KEY=your-api-key
 CLOUDINARY_API_SECRET=your-api-secret
-ADMIN_PASSWORD=your-admin-password
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-gmail@gmail.com
+SMTP_PASS=your-gmail-app-password    # NOT your regular password — use a Gmail App Password
+SITE_URL=http://localhost:5000
+SENTRY_DSN=                          # optional — get free DSN at sentry.io
 ```
-> For local dev without Postgres, omit `DATABASE_URL` — SQLite is used automatically.
 
-3. **Run Migrations & Start**
+> **Gmail App Password:** Google Account → Security → 2-Step Verification → App Passwords
+
+### 3. Run
 ```bash
-flask db upgrade
 python app.py
 ```
-Visit: `http://localhost:5000` | Admin: `http://localhost:5000/admin/login`
+
+The app auto-applies all database migrations on startup. No manual `flask db upgrade` needed.
+
+Visit `http://localhost:5000` — admin login at `/admin/login` (default user: `ezinne`).
 
 ---
 
-## 🗄️ Database — Moving from Render to Neon
+## 🗄 Database Migrations
 
-> **Why move?** Render free Postgres now expires after just **30 days** (no extension). Neon is free forever with 512MB storage — no credit card required.
-
-### Step 1 — Back up your Render DB
-```bash
-pg_dump -Fc --no-acl --no-owner -h <render-host> -U <user> <dbname> > backup.dump
-```
-
-### Step 2 — Create a Neon project
-1. Go to [neon.tech](https://neon.tech) → Sign up (free, no credit card)
-2. Create a new project → copy the **connection string** (looks like `postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require`)
-
-### Step 3 — Restore your data to Neon
-```bash
-pg_restore --no-acl --no-owner -d "postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require" backup.dump
-```
-
-### Step 4 — Update your environment
-On **Render dashboard** (or `.env` locally), update:
-```
-DATABASE_URL=postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require
-```
-
-### Step 5 — Redeploy
-```bash
-git push  # triggers Render auto-deploy
-```
-
-> ✅ No code changes needed. SQLAlchemy auto-handles Neon's standard Postgres URL.
-
----
-
-## 🚀 Deployment (Render)
+Migrations are managed with **Flask-Migrate** (Alembic).
 
 ```bash
-# Set environment variables in Render dashboard, then:
-git push origin main   # Render auto-deploys on push
+# Generate a new migration after changing models
+flask db migrate -m "describe your change"
+
+# Apply pending migrations (done automatically on startup too)
+flask db upgrade
 ```
 
-**Required env vars on Render:**
-- `SECRET_KEY`
-- `DATABASE_URL` (your Neon connection string)
-- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
-- `ADMIN_PASSWORD`
-- `FLASK_ENV=production`
+The app handles three startup scenarios automatically:
+- **Fresh DB** — runs all migrations from scratch
+- **Existing DB without migration history** — adds missing columns and stamps the version
+- **Existing DB with history** — applies only pending migrations
 
 ---
 
-## 🔐 Security
+## ☁️ Deployment (Render)
 
-- ✅ Password hashing with Werkzeug
-- ✅ CSRF protection on all forms (Flask-WTF)
-- ✅ Session security (HttpOnly, Secure, SameSite=Lax)
-- ✅ Password strength validation
-- ✅ SQL injection prevention via SQLAlchemy ORM
-- ✅ File upload whitelist (png, jpg, jpeg, webp, gif, avif, heic)
-- ✅ Direct Cloudinary upload for audio (bypasses Flask server entirely)
-- ✅ Environment-variable-based secrets (no hardcoded credentials)
+### Environment Variables (Render Dashboard → Environment)
+```
+SECRET_KEY=...
+ADMIN_PASSWORD=...
+DATABASE_URL=postgresql://neondb_owner:<pass>@ep-xxx.neon.tech/neondb?sslmode=require&channel_binding=require
+CLOUDINARY_CLOUD_NAME=...
+CLOUDINARY_API_KEY=...
+CLOUDINARY_API_SECRET=...
+SMTP_USER=...
+SMTP_PASS=...
+SITE_URL=https://innerpeacehub.onrender.com
+FLASK_ENV=production
+SENTRY_DSN=...   (optional)
+```
 
----
-
-## 📝 Database Models
-
-| Model | Key Fields |
-|-------|-----------|
-| `Post` | title, slug (unique), category, excerpt, content, image, status, is_featured, tags, date_posted |
-| `Comment` | post_id (FK), name, email, body, date_posted |
-| `Message` | name, email, subject, message, date_sent, is_read |
-| `Subscriber` | email, date_subscribed |
-| `PodcastEpisode` | title, episode_number, description, audio_url, spotify_url, cover_image, duration, status, date_published |
-| `Admin` | username, password (hashed) |
-
----
-
-## 🎨 Design System
-
-| Token | Value |
-|-------|-------|
-| Primary | `#6B2D8B` (Purple) |
-| Accent | `#D4A843` (Gold) |
-| Background | `#FFF9F5` (Off-white) |
-| Text | `#2C2C2C` |
-| Dark bg | `#1a1a2e` |
-| Dark card | `#16213e` |
-
-**Fonts:** Playfair Display (headings) · Lato (body)
+### Build & Start Commands
+| | Command |
+|---|---|
+| Build | `pip install -r requirements.txt` |
+| Start | `gunicorn app:app` |
 
 ---
 
-## 🔄 Content Workflow
+## 🔐 Two-Factor Authentication
 
-### Blog Post
-1. Admin → Create Post → fill title, category, excerpt, content (CKEditor), image, tags
-2. Save as **Draft** (invisible to public) or **Publish** (live immediately)
-3. Edit anytime; slug only regenerates if title changes
+1. Log in to the admin dashboard
+2. Click the **2FA** button in the top-right header
+3. Scan the QR code with **Google Authenticator** or **Authy**
+4. Enter the 6-digit code to confirm and enable
+5. On future logins you will be asked for your code after your password
 
-### Podcast Episode
-1. Admin → Podcast → New Episode
-2. Upload audio **directly from browser** to Cloudinary (no server file size limit; shows upload progress)
-3. Optionally add Spotify embed URL, cover image, episode number
-4. Publish or save as draft
+To disable 2FA: go back to the 2FA page and click **Disable**.
 
 ---
 
-## 🚀 Future Improvements
+## 🌐 Public Routes
 
-### High Priority
-1. **View Counter** — Track how many times each post has been read; display on post and dashboard
-2. **Newsletter Integration** — Connect subscriber list to Mailchimp or send weekly digest emails automatically via a cron job
-3. **Admin Comment Moderation** — Let admin approve/reject comments before they appear publicly; add moderation queue to dashboard
-4. **Post Scheduling** — Set a future publish date/time so posts go live automatically without logging in
+| Route | Description |
+|---|---|
+| `/` | Homepage with featured posts and carousel |
+| `/blog` | All posts with category filter and search |
+| `/search?q=term` | Full-text search results |
+| `/post/<slug>` | Individual post with series nav, comments, reactions |
+| `/podcast` | Podcast episodes |
+| `/about` | About page |
+| `/contact` | Contact form |
+| `/rss.xml` | RSS 2.0 feed |
+| `/sitemap.xml` | XML sitemap |
+| `/offline` | PWA offline fallback |
 
-### Medium Priority
-5. **Search Page Results** — Dedicated `/search` results page with highlighted query matches, not just filtered listing
-6. **Related Posts (AI)** — Use text similarity on tags/category/excerpt to auto-suggest 3 related articles at bottom of each post
-7. **Social Sharing Metadata** — Per-post Open Graph image using the featured image (not just the logo) so shares on Instagram/WhatsApp show the right thumbnail
-8. **RSS Feed** — Generate an `/rss.xml` feed so readers can subscribe in podcast/blog apps
-9. **Sitemap** — Auto-generate `/sitemap.xml` on publish for better Google indexing
+## 🔒 Admin Routes
 
-### Nice to Have
-10. **Multi-author Support** — Add a `Author` model so guest bloggers can be credited per post
-11. **Post Series** — Group related posts into a series (e.g. "Healing from Heartbreak — Part 1, 2, 3") with prev/next navigation
-12. **Offline Caching (PWA)** — Add a service worker so the site loads even with poor internet (important for mobile users in Nigeria)
-13. **Performance Monitoring** — Add Sentry (free tier) for real-time error tracking in production
-14. **Two-Factor Auth (2FA)** — TOTP-based 2FA for the admin login to strengthen security
-
----
-
-## 🐛 Known Issues & Fixes
-
-| Issue | Status | Fix |
-|-------|--------|-----|
-| Favicon missing in deployment | ✅ Fixed | Multiple favicon formats added |
-| CSRF on CKEditor uploads | ✅ Fixed | `CKEDITOR_ENABLE_CSRF=True` |
-| Postgres SSL "unexpected EOF" | ✅ Fixed | `pool_pre_ping=True`, `pool_recycle=180` |
-| Scroll-to-top invisible | ✅ Fixed | Moved button before `<script>` tag; CSS conflict removed |
-| Carousel broken on desktop | ✅ Fixed | Full rewrite with dynamic card widths per breakpoint |
-| Admin table overflow on mobile | ✅ Fixed | `overflow-x: auto` wrapper + `min-width` on table |
-| Post slug collision on edit | ✅ Fixed | Only regenerates slug if title actually changed |
-| Podcast audio 22MB+ upload fail | ✅ Fixed | Direct browser-to-Cloudinary upload (bypasses Flask) |
-| Render Postgres expiry (30 days) | ✅ Resolved | Migrated to Neon (free, never expires) — see DB section above |
+| Route | Description |
+|---|---|
+| `/admin/login` | Admin login |
+| `/admin/2fa` | TOTP verification step (when 2FA enabled) |
+| `/admin` | Dashboard |
+| `/admin/create-post` | Create / edit posts |
+| `/admin/subscribers` | Newsletter subscribers |
+| `/admin/comments` | Comment moderation queue |
+| `/admin/authors` | Guest author management |
+| `/admin/series` | Post series management |
+| `/admin/podcast` | Podcast episode management |
+| `/admin/2fa/setup` | Enable / disable 2FA |
+| `/admin/change-password` | Change admin password |
 
 ---
 
-## 📞 Contact & Support
+## 📂 Project Structure
 
-**Site Owner:** Ezinne Uduma · info.innerpeacehub@gmail.com
+```
+InnerPeace_Hub/
+├── app.py                  # App factory, startup DB logic
+├── config.py               # Dev / Production config classes
+├── models/
+│   └── __init__.py         # SQLAlchemy models (Post, Admin, Author, Series, Comment…)
+├── routes/
+│   ├── blog_routes.py      # Public blog, search, RSS, sitemap, PWA routes
+│   ├── admin_routes.py     # Admin CRUD, author & series management
+│   └── auth_routes.py      # Login, logout, change-password, 2FA
+├── templates/
+│   ├── base.html           # Base layout (dark mode, OG tags, SW registration)
+│   ├── post.html           # Post detail (series nav, author byline, reactions)
+│   ├── search.html         # Search results with highlighting
+│   ├── offline.html        # PWA offline fallback
+│   └── admin/              # Dashboard, create/edit post, authors, series, 2FA…
+├── static/
+│   ├── css/styles.css      # All styles including dark mode CSS variables
+│   ├── js/script.js        # Carousel, reactions, dark mode, scroll-to-top
+│   ├── sw.js               # Service worker (PWA)
+│   ├── manifest.json       # PWA manifest
+│   └── images/             # Static images (add icon-192.png + icon-512.png for PWA)
+├── migrations/             # Alembic migration versions
+├── requirements.txt
+├── Procfile                # gunicorn app:app
+├── .env.example
+└── LICENSE                 # MIT
+```
 
-**Developer:** Divine Nnata · [LinkedIn](https://www.linkedin.com/in/divine-nnata-0203b7225)
+---
+
+## 📋 PWA Icons
+
+For full PWA installability, add two icons to `static/images/`:
+- `icon-192.png` — 192×192px
+- `icon-512.png` — 512×512px
+
+You can use the existing site logo resized to these dimensions.
 
 ---
 
 ## 📄 License
 
-MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-## 🙏 Acknowledgments
-
-Built with Flask · PostgreSQL on Neon · Media on Cloudinary · Icons by Font Awesome · Editor by CKEditor
-
----
-
-**Last Updated:** May 17, 2026
-**Version:** 3.0 — Dark mode, native comments, podcast system, Neon DB migration
+[MIT License](LICENSE) — © 2026 Ezinne Uduma / InnerPeace Hub
