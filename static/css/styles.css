@@ -3450,3 +3450,23 @@ mark {
   color: #6B2D8B;
   flex-shrink: 0;
 }
+
+
+/* ═══════════════════════════════════════
+   Author comment badge
+═══════════════════════════════════════ */
+.author-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #6B2D8B;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 2px 9px;
+  border-radius: 20px;
+  margin-left: 6px;
+  vertical-align: middle;
+  text-transform: uppercase;
+}
