@@ -163,7 +163,7 @@ def create_app(config_class=config):
                 # stamp at latest head
                 conn.execute(text("CREATE TABLE IF NOT EXISTS alembic_version (version_num VARCHAR(32) NOT NULL, CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num))"))
                 conn.execute(text("DELETE FROM alembic_version"))
-                conn.execute(text("INSERT INTO alembic_version (version_num) VALUES ('b2c3d4e5f6a7')"))
+                conn.execute(text("INSERT INTO alembic_version (version_num) VALUES ('c3d4e5f6a7b8')"))
                 conn.commit()
             print("[DB] Schema patched and stamped at head.")
 
