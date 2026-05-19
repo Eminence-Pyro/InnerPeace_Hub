@@ -320,3 +320,13 @@ def service_worker():
     response.headers['Service-Worker-Allowed'] = '/'
     response.headers['Cache-Control'] = 'no-cache'
     return response
+
+# ── Google Search Console verification ───────────────────────────────────────
+@blog_bp.route('/google5bc2898caf6741a.html')
+def google_verify():
+    from flask import send_from_directory
+    import os as _os
+    return send_from_directory(
+        _os.path.join(blog_bp.root_path, '..', 'static'),
+        'google5bc2898caf6741a.html'
+    )
