@@ -95,7 +95,7 @@ def create_app(config_class=config):
                     conn.execute(text("ALTER TABLE post ADD COLUMN scheduled_for DATETIME"))
                     print("[DB] Added post.scheduled_for")
                 if 'is_featured' not in col_map:
-                    conn.execute(text("ALTER TABLE post ADD COLUMN is_featured BOOLEAN NOT NULL DEFAULT 0"))
+                    conn.execute(text("ALTER TABLE post ADD COLUMN is_featured BOOLEAN NOT NULL DEFAULT FALSE"))
                     print("[DB] Added post.is_featured")
                 if 'tags' not in col_map:
                     conn.execute(text("ALTER TABLE post ADD COLUMN tags VARCHAR(300)"))
@@ -104,10 +104,10 @@ def create_app(config_class=config):
                 # comment columns
                 comment_cols = {col['name'] for col in inspector.get_columns('comment')}
                 if 'approved' not in comment_cols:
-                    conn.execute(text("ALTER TABLE comment ADD COLUMN approved BOOLEAN NOT NULL DEFAULT 0"))
+                    conn.execute(text("ALTER TABLE comment ADD COLUMN approved BOOLEAN NOT NULL DEFAULT FALSE"))
                     print("[DB] Added comment.approved")
                 if 'is_admin' not in comment_cols:
-                    conn.execute(text("ALTER TABLE comment ADD COLUMN is_admin BOOLEAN NOT NULL DEFAULT 0"))
+                    conn.execute(text("ALTER TABLE comment ADD COLUMN is_admin BOOLEAN NOT NULL DEFAULT FALSE"))
                     print("[DB] Added comment.is_admin")
 # already present
 
@@ -117,7 +117,7 @@ def create_app(config_class=config):
                     conn.execute(text("ALTER TABLE admin ADD COLUMN totp_secret VARCHAR(32)"))
                     print("[DB] Added admin.totp_secret")
                 if 'totp_enabled' not in admin_cols:
-                    conn.execute(text("ALTER TABLE admin ADD COLUMN totp_enabled BOOLEAN NOT NULL DEFAULT 0"))
+                    conn.execute(text("ALTER TABLE admin ADD COLUMN totp_enabled BOOLEAN NOT NULL DEFAULT FALSE"))
                     print("[DB] Added admin.totp_enabled")
 
                 # author table
@@ -190,7 +190,7 @@ def create_app(config_class=config):
                     conn.execute(text("ALTER TABLE admin ADD COLUMN totp_secret VARCHAR(32)"))
                     print("[DB] Added admin.totp_secret")
                 if 'totp_enabled' not in admin_cols:
-                    conn.execute(text("ALTER TABLE admin ADD COLUMN totp_enabled BOOLEAN NOT NULL DEFAULT 0"))
+                    conn.execute(text("ALTER TABLE admin ADD COLUMN totp_enabled BOOLEAN NOT NULL DEFAULT FALSE"))
                     print("[DB] Added admin.totp_enabled")
                 conn.commit()
 
