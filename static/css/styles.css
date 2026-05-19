@@ -3470,3 +3470,50 @@ mark {
   vertical-align: middle;
   text-transform: uppercase;
 }
+
+
+/* ═══════════════════════════════════════
+   Admin Reply Box (inside comments section)
+═══════════════════════════════════════ */
+.admin-reply-box {
+  margin-top: 40px;
+  padding: 24px;
+  background: var(--card-bg, #fff);
+  border: 2px solid #6B2D8B;
+  border-radius: 14px;
+}
+.admin-reply-box h3 {
+  color: #6B2D8B;
+  font-size: 1.1rem;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.admin-reply-box textarea {
+  width: 100%;
+  border: 1px solid #e8e0f0;
+  border-radius: 8px;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  resize: vertical;
+  background: var(--bg, #fff);
+  color: var(--text, #333);
+  box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════
+   Author comment card highlight
+═══════════════════════════════════════ */
+.comment-card--author {
+  border-left: 3px solid #6B2D8B;
+  background: var(--card-bg, #faf5ff);
+}
+.comment-card--author .comment-avatar {
+  background: #6B2D8B;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
