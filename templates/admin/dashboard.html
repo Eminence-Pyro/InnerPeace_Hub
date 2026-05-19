@@ -44,6 +44,14 @@
           <i class="fas fa-comments"></i>
           Comments{% if pending_comments > 0 %} <span class="unread-badge">{{ pending_comments }}</span>{% endif %}
         </a>
+        <a href="{{ url_for('auth.change_password') }}" class="btn-secondary">
+          <i class="fas fa-key"></i>
+          Password
+        </a>
+        <a href="{{ url_for('auth.change_username') }}" class="btn-secondary">
+          <i class="fas fa-user-edit"></i>
+          Username
+        </a>
         <a href="{{ url_for('auth.setup_2fa') }}" class="btn-secondary" title="Two-Factor Authentication">
           <i class="fas fa-shield-alt"></i>
           2FA
