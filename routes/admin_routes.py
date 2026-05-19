@@ -212,6 +212,11 @@ def delete_post(post_id):
     post = Post.query.get_or_404(post_id)
     title = post.title
 
+    # Delete related records first to avoid FK constraint violations
+    from models import Comment, PostSeriesEntry
+    Comment.query.filter_by(post_id=post.id).delete()
+    PostSeriesEntry.query.filter_by(post_id=post.id).delete()
+
     db.session.delete(post)
     db.session.commit()
 
