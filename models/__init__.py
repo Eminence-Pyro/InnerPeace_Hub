@@ -44,7 +44,7 @@ class Post(db.Model):
     tags = db.Column(db.Text, nullable=True)  # comma-separated tags, no length limit
     view_count  = db.Column(db.Integer, default=0, nullable=False)
     author_id   = db.Column(db.Integer, db.ForeignKey('author.id'), nullable=True)  # None = site owner
-    comments = db.relationship('Comment', backref='post', lazy=True)
+    comments = db.relationship('Comment', backref='post', lazy=True, cascade='all, delete-orphan')
 
     def is_published(self):
         return self.status == 'published'
@@ -108,4 +108,4 @@ class PostSeriesEntry(db.Model):
     series_id = db.Column(db.Integer, db.ForeignKey('post_series.id'), nullable=False)
     post_id   = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
     position  = db.Column(db.Integer, nullable=False, default=1)
-    post      = db.relationship('Post', backref=db.backref('series_entries', lazy=True))
+    post      = db.relationship('Post', backref=db.backref('series_entries', lazy=True, cascade='all, delete-orphan'))
