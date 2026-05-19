@@ -109,6 +109,7 @@ def create_app(config_class=config):
                 if 'is_admin' not in comment_cols:
                     conn.execute(text("ALTER TABLE comment ADD COLUMN is_admin BOOLEAN NOT NULL DEFAULT 0"))
                     print("[DB] Added comment.is_admin")
+# already present
 
                 # admin columns
                 admin_cols = {col['name'] for col in inspector.get_columns('admin')}
@@ -162,7 +163,7 @@ def create_app(config_class=config):
                 # stamp at latest head
                 conn.execute(text("CREATE TABLE IF NOT EXISTS alembic_version (version_num VARCHAR(32) NOT NULL, CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num))"))
                 conn.execute(text("DELETE FROM alembic_version"))
-                conn.execute(text("INSERT INTO alembic_version (version_num) VALUES ('a1b2c3d4e5f6')"))
+                conn.execute(text("INSERT INTO alembic_version (version_num) VALUES ('b2c3d4e5f6a7')"))
                 conn.commit()
             print("[DB] Schema patched and stamped at head.")
 
